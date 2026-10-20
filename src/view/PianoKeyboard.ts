@@ -98,9 +98,15 @@ export class PianoKeyboard {
     }
   }
 
-  /** Light up `notes` for `seconds`. Notes outside the keyboard are ignored. */
-  show(notes: readonly number[], role: KeyRole, seconds: number): void {
-    for (const note of notes) {
+  /**
+   * Light up `notes` for `seconds`. Notes outside the keyboard are ignored.
+   * With `allOctaves`, every key with the same pitch class lights up too: e.g. every C, for a C.
+   */
+  show(notes: readonly number[], role: KeyRole, seconds: number, allOctaves = false): void {
+    const pitchClasses = new Set(notes.map((note) => new PitchClass(note).value));
+    const lit = allOctaves ? [...this.keys.keys()].filter((note) => pitchClasses.has(new PitchClass(note).value)) : notes;
+
+    for (const note of lit) {
       const key = this.keys.get(note);
       if (!key) continue;
       clearTimeout(this.timers.get(note));

@@ -99,7 +99,8 @@ export class PitchCirclesApp {
   /** Play notes, and show them on the keyboard. */
   private play(notes: readonly number[], role: KeyRole): void {
     this.player.play(notes);
-    this.piano.show(notes, role, this.player.soundingSeconds);
+    // The region's root and the chord light every octave of their notes; a clicked key lights just that key
+    this.piano.show(notes, role, this.player.soundingSeconds, role !== 'played');
   }
 
   private onKey(event: KeyboardEvent): void {
