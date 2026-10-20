@@ -11,7 +11,7 @@ export interface LevelControlsOptions<T> {
 }
 
 /**
- * The controls for the region or the chord: anticlockwise and clockwise arrows to move its root round the circle, its root's name, and
+ * The controls for the region or the chord: clockwise and anticlockwise arrows to move its root round the circle, its root's name, and
  * radio buttons for its type (e.g. major, minor).
  */
 export class LevelControls<T> {
@@ -35,7 +35,8 @@ export class LevelControls<T> {
     this.root = document.createElement('span');
     this.root.className = 'root';
 
-    section.append(title, back, forward, this.root);
+    // Clockwise first, as on the space buttons
+    section.append(title, forward, back, this.root);
     this.types = new RadioGroup(section, `${options.title} type`, options.types, options.onType);
     container.append(section);
   }

@@ -19,7 +19,7 @@ the region's tonic (in the diatonic ring), and a yellow dot the chord's root (al
 Every control is on show - buttons, radio buttons, switches and sliders - so you can always see what's happening.
 
 - **Region** and **Chord** (under the keyboard): the curved arrows move the root round the circle a semitone at a
-  time (↺ anticlockwise, down; ↻ clockwise, up),
+  time (↻ clockwise, up, on the left; ↺ anticlockwise, down, on the right, as on the space buttons),
   beside the root's name, and radio buttons choose the type. A region can be major, minor (natural minor: A minor has
   the same notes as C major) or harmonic minor (the 7th raised: A harmonic minor has G#). A chord is a major, minor,
   diminished or augmented triad. With **Follow region** on, the chord is the triad on its root in the region's scale
