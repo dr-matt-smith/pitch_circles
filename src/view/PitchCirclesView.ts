@@ -9,7 +9,8 @@ import { ringOf } from './ringOrder.ts';
 
 /**
  * Draws tonal pitch space on a canvas as five concentric rings of 12 segments, one ring per level.
- * A segment is coloured when its pitch class is in that level, and grey when not.
+ * A segment is coloured when its pitch class is in that level (each level has its own colour), and grey when not.
+ * The chord's notes are outlined as slices, from the centre to the edge.
  *
  * Normally the chromatic level is the innermost ring; with `reversed` it is the outermost (see ringOf()).
  *
@@ -63,8 +64,9 @@ export class PitchCirclesView {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawRings(space);
-    this.drawRootDots(space);
     this.drawLines();
+    this.drawChordSlices(space);
+    this.drawRootDots(space);
     this.drawLabels(mode);
   }
 
@@ -80,6 +82,25 @@ export class PitchCirclesView {
         const { start, end } = geo.segmentOf(pc);
         this.slice(radius, start, end, levelColour(level));
       }
+    }
+  }
+
+  // The chord as 'pizza slices': a bold outline round each of its notes' wedges, from the centre to the outer edge.
+  // Only outlined, so the rings' colours inside still show
+  private drawChordSlices(space: TonalPitchSpace): void {
+    const ctx = this.ctx;
+    const geo = this.geometry;
+    const { x, y } = geo.centre;
+    ctx.strokeStyle = Palette.chordSlice;
+    ctx.lineWidth = Math.max(2.5, geo.gap * 0.06);
+    ctx.lineJoin = 'round';
+    for (const pc of space.level(Level.Triadic).members()) {
+      const { start, end } = geo.segmentOf(pc);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.arc(x, y, geo.outerRadius, start, end);
+      ctx.closePath();
+      ctx.stroke();
     }
   }
 

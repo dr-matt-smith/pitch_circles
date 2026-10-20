@@ -4,7 +4,9 @@ An object-oriented TypeScript version of an older Java/Swing pitch circles app, 
 It draws on an HTML canvas and plays sound with Web Audio, so it needs no libraries.
 
 It draws (Lerdahl's) tonal pitch space as five concentric rings, one per level, from the inside out: chromatic,
-diatonic, triadic, fifth and root. A segment is coloured when its pitch class is in that level. A red dot marks
+diatonic, triadic, fifth and root. A segment is coloured when its pitch class is in that level, each level in its own
+colour: chromatic pale blue, diatonic magenta, triadic orange, fifth green, root cyan. The chord's three notes are
+outlined in red as slices, from the centre to the edge. A red dot marks
 the region's tonic (in the diatonic ring), and a yellow dot the chord's root (always in the outermost ring).
 
 - **In Celbridge:** open `Pitch Circles.celbridge`. See `CELBRIDGE.md`.
@@ -39,7 +41,7 @@ V = reverse the circles, space = play the chord once.
 ## The keyboard
 
 The keyboard along the top (three octaves, C3 to B5) shows the region's scale as the diatonic ring does: its keys are coloured magenta, and
-the tonic has a red ring round its label. The chord's actual three keys have a pink band, as in the triadic ring, and
+the tonic has a red ring round its label. The chord's actual three keys have an orange band, as in the triadic ring, and
 its root key a yellow ring round its label, so you can see it move up and down octaves. The keys are labelled to match the Display setting.
 
 While a note sounds, a disc near the top of its key shows it playing: dark purple for the region's root (in every
