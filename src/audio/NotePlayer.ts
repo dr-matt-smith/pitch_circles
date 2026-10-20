@@ -1,9 +1,11 @@
 import { DEFAULT_INSTRUMENT } from './instruments.ts';
-import { buildVoice, type SynthSound } from './voice.ts';
+import { buildVoice, readInstrument, type SynthSound } from './voice.ts';
 
 /** Something that can sound notes: one note, or several at once (a chord). */
 export interface NotePlayer {
   play(midiNotes: readonly number[]): void;
+  /** Roughly how long a note sounds for, in seconds, from when it's played to the end of its release. */
+  readonly soundingSeconds: number;
 }
 
 /** Frequency in Hz of a MIDI note number (69 = A4 = 440 Hz). */
@@ -26,6 +28,11 @@ export class SynthNotePlayer implements NotePlayer {
     private readonly noteSeconds = 0.8,
     private readonly volume = 0.6,
   ) {}
+
+  get soundingSeconds(): number {
+    const { a, d, r } = readInstrument(this.instrument.instrument).adsr;
+    return Math.max(a + d, this.noteSeconds) + r; // as buildVoice() schedules it
+  }
 
   play(midiNotes: readonly number[]): void {
     const ctx = this.context ??= new AudioContext();
@@ -57,5 +64,6 @@ export class SynthNotePlayer implements NotePlayer {
 
 /** Used when the browser has no Web Audio. */
 export class SilentNotePlayer implements NotePlayer {
+  readonly soundingSeconds = 1;
   play(_midiNotes: readonly number[]): void {}
 }

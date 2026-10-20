@@ -14,6 +14,55 @@ body {
   font-family: "Times New Roman", serif;
 }
 
+/* The keyboard: white keys side by side, black keys on top of them (positions set in PianoKeyboard.ts) */
+#piano {
+  position: relative;
+  flex: none;
+  width: calc(100% - 20px);
+  max-width: 900px;
+  height: 90px;
+  margin: 10px auto 0;
+}
+
+#piano .key {
+  position: absolute;
+  top: 0;
+  box-sizing: border-box;
+  border-radius: 0 0 4px 4px;
+  transition: background-color 0.25s; /* fade out when a note ends */
+}
+
+#piano .lit {
+  transition: none; /* light up straight away */
+}
+
+#piano .white {
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #444444;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  font: 11px Arial, sans-serif;
+  color: #666666;
+}
+
+#piano .black {
+  height: 60%;
+  background: #222222;
+  z-index: 1;
+}
+
+/* Lit keys: the region's root in the region colour, the chord's notes in the chord colour (as in the info line) */
+#piano .lit.region {
+  background: #ff00ff;
+}
+
+#piano .lit.chord {
+  background: #ff0000;
+}
+
 #buttons {
   display: flex;
   flex-wrap: wrap;

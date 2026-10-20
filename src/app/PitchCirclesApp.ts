@@ -7,10 +7,12 @@ import { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { ButtonBar } from '../ui/ButtonBar.ts';
 import { Dropdown } from '../ui/Dropdown.ts';
 import { InfoPanel } from '../ui/InfoPanel.ts';
+import { KeyRole, PianoKeyboard } from '../view/PianoKeyboard.ts';
 import { PitchCirclesView } from '../view/PitchCirclesView.ts';
 
 /** The page elements the app uses. */
 export interface AppElements {
+  piano: HTMLElement;
   buttons: HTMLElement;
   canvas: HTMLCanvasElement;
   info: HTMLElement;
@@ -19,7 +21,7 @@ export interface AppElements {
 /**
  * The app. It owns the model (TonalPitchSpace), and wires the buttons and keys to it.
  * Whenever the model changes, the circles and info panel are redrawn. Changing the region plays its root note;
- * changing the chord plays the chord's three notes.
+ * changing the chord plays the chord's three notes. The keyboard along the top shows the notes as they play.
  *
  * Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type, D = display mode.
  */
@@ -29,11 +31,13 @@ export class PitchCirclesApp {
   private readonly circles: PitchCirclesView;
   private readonly info: InfoPanel;
   private readonly player: NotePlayer;
+  private readonly piano: PianoKeyboard;
   private readonly regionType: Dropdown<RegionType>;
   private readonly chordType: Dropdown<ChordType>;
 
   constructor(elements: AppElements) {
     this.player = 'AudioContext' in globalThis ? new SynthNotePlayer() : new SilentNotePlayer();
+    this.piano = new PianoKeyboard(elements.piano);
     this.circles = new PitchCirclesView(elements.canvas);
     this.info = new InfoPanel(elements.info);
 
@@ -63,7 +67,8 @@ export class PitchCirclesApp {
 
     this.space.onChange((space, change) => {
       this.refresh();
-      this.player.play(change === 'region' ? [space.regionRootMidiNote()] : space.chordMidiNotes());
+      if (change === 'region') this.play([space.regionRootMidiNote()], 'region');
+      else this.play(space.chordMidiNotes(), 'chord');
     });
     document.addEventListener('keydown', (event) => this.onKey(event));
     new ResizeObserver(() => {
@@ -84,9 +89,15 @@ export class PitchCirclesApp {
       INSTRUMENTS.map((sound) => sound.name),
       (name) => {
         player.instrument = instrumentNamed(name) ?? player.instrument;
-        player.play(this.space.chordMidiNotes()); // let the new sound be heard
+        this.play(this.space.chordMidiNotes(), 'chord'); // let the new sound be heard
       },
     );
+  }
+
+  /** Play notes, and show them on the keyboard. */
+  private play(notes: readonly number[], role: KeyRole): void {
+    this.player.play(notes);
+    this.piano.show(notes, role, this.player.soundingSeconds);
   }
 
   private onKey(event: KeyboardEvent): void {
