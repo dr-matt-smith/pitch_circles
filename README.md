@@ -33,6 +33,4 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/audio/ChordPlayer.ts` | `ChordPlayer` (interface), `WebAudioChordPlayer`, `SilentChordPlayer` | `MIDIPlayer` |
 | `src/app/PitchCirclesApp.ts` | `PitchCirclesApp`: creates everything, and wires the buttons, keys and window resizing to the model | `PS31` |
 
-There's an earlier version built with Phaser 4: the `phaser-version` tag.
-
 MIT licensed: see `LICENSE`.
