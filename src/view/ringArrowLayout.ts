@@ -7,14 +7,21 @@ export interface ArrowPlacement {
   rotation: number; // radians: turns the arrow to point along the ring (0 at 12 o'clock)
 }
 
-/** The size of a ring's arrow buttons, in pixels. */
-export function arrowSize(geometry: CircleGeometry): number {
-  return Math.max(16, Math.round(geometry.gap * 0.4));
+const SEGMENT = (2 * Math.PI) / 12;
+const ARROW_ANGLE = SEGMENT * 0.36; // how far either side of the root's label: just inside its segment's edges
+
+/**
+ * The size of a ring's arrows, in pixels: in proportion to the ring, so they are smaller on the inner rings, where
+ * the segments are smaller.
+ */
+export function arrowSize(geometry: CircleGeometry, ring: number): number {
+  const segmentWidth = geometry.ringMiddle(ring) * SEGMENT; // the length of the segment's arc
+  return Math.round(Math.max(10, Math.min(geometry.gap * 0.5, segmentWidth * 0.28)));
 }
 
 /**
- * Where a ring's "<" (anticlockwise) and ">" (clockwise) buttons go: either side of the label of the ring's root,
- * in the middle of the ring, turned to point along it.
+ * Where a ring's "<" (anticlockwise) and ">" (clockwise) arrows go: either side of the label of the root, near the
+ * edges of its segment, in the middle of the ring, turned to point along it.
  *
  * Plain maths, no drawing, so it can be tested on its own.
  */
@@ -25,11 +32,9 @@ export function ringArrowPlacements(
 ): { back: ArrowPlacement; forward: ArrowPlacement } {
   const angle = geometry.angleOf(root);
   const radius = geometry.ringMiddle(ring);
-  // the same distance from the label on every ring, so the arrows sit just clear of it
-  const offset = (geometry.gap * 0.5) / radius;
   const rotation = angle + Math.PI / 2;
   return {
-    back: { centre: geometry.pointAt(angle - offset, radius), rotation },
-    forward: { centre: geometry.pointAt(angle + offset, radius), rotation },
+    back: { centre: geometry.pointAt(angle - ARROW_ANGLE, radius), rotation },
+    forward: { centre: geometry.pointAt(angle + ARROW_ANGLE, radius), rotation },
   };
 }

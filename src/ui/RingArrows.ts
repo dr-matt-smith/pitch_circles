@@ -13,7 +13,7 @@ const STEPS: Record<Level, string> = {
 };
 
 /**
- * A "<" and ">" button on every ring of the circles, beside the chord's root, to move the chord by that ring's step:
+ * A "<" and ">" arrow on every ring of the circles, near the edges of the chord's root's segment, to move the chord by that ring's step:
  * to the next note down or up in that level of the pitch space (see TonalPitchSpace.stepChordIn()). They are HTML
  * buttons laid over the canvas, and move round with the chord's root.
  */
@@ -30,12 +30,13 @@ export class RingArrows {
 
   /** Put the buttons beside the chord's root, on each level's ring (`ringOf` says which ring that is). */
   update(geometry: CircleGeometry, space: TonalPitchSpace, ringOf: (level: Level) => number): void {
-    const size = arrowSize(geometry);
     for (const { level, back, forward } of this.buttons) {
-      const places = ringArrowPlacements(geometry, ringOf(level), space.chordRoot);
+      const ring = ringOf(level);
+      const size = arrowSize(geometry, ring);
+      const places = ringArrowPlacements(geometry, ring, space.chordRoot);
       for (const [button, place] of [[back, places.back], [forward, places.forward]] as const) {
         button.style.width = button.style.height = `${size}px`;
-        button.style.fontSize = `${Math.round(size * 0.6)}px`;
+        button.style.fontSize = `${size}px`;
         button.style.left = `${place.centre.x - size / 2}px`;
         button.style.top = `${place.centre.y - size / 2}px`;
         button.style.transform = `rotate(${place.rotation}rad)`;
