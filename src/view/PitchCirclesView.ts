@@ -5,9 +5,11 @@ import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { CircleGeometry } from './CircleGeometry.ts';
 import { levelColour, Palette } from './Palette.ts';
 
-// The levels whose root is marked with a pair of dots: the region's tonic, and the chord's root.
-const LEVELS_WITH_ROOT_DOTS: readonly Level[] = [Level.Diatonic, Level.Root];
-const DOT_OFFSET = (2 * Math.PI) / 40; // 9 degrees either side of the label
+// The levels whose root is marked with a dot: the region's tonic (red), and the chord's root (yellow).
+const ROOT_DOTS: readonly { level: Level; colour: string }[] = [
+  { level: Level.Diatonic, colour: Palette.regionRootDot },
+  { level: Level.Root, colour: Palette.chordRootDot },
+];
 
 /**
  * Draws tonal pitch space on a canvas as five concentric rings of 12 segments, one ring per level.
@@ -73,13 +75,12 @@ export class PitchCirclesView {
 
   private drawRootDots(space: TonalPitchSpace): void {
     const geo = this.geometry;
-    const dotRadius = Math.max(2.5, geo.gap * 0.07);
-    for (const level of LEVELS_WITH_ROOT_DOTS) {
+    const dotRadius = Math.max(4, geo.gap * 0.11);
+    for (const { level, colour } of ROOT_DOTS) {
       const root = space.level(level).root();
       if (!root) continue;
-      const radius = geo.ringInner(level) + geo.gap * 3 / 4;
-      this.dot(geo.pointAt(geo.angleOf(root) - DOT_OFFSET, radius), dotRadius, Palette.rootDotLeft);
-      this.dot(geo.pointAt(geo.angleOf(root) + DOT_OFFSET, radius), dotRadius, Palette.rootDotRight);
+      // in the segment, just outside the label
+      this.dot(geo.pointAt(geo.angleOf(root), geo.ringInner(level) + geo.gap * 0.8), dotRadius, colour);
     }
   }
 
@@ -140,10 +141,14 @@ export class PitchCirclesView {
     this.ctx.fill();
   }
 
+  // A dot with a thin dark outline, so it shows up on any ring colour
   private dot(p: { x: number; y: number }, radius: number, colour: string): void {
     this.ctx.fillStyle = colour;
+    this.ctx.strokeStyle = Palette.dotOutline;
+    this.ctx.lineWidth = 1;
     this.ctx.beginPath();
     this.ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
     this.ctx.fill();
+    this.ctx.stroke();
   }
 }

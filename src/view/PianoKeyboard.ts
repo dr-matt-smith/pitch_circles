@@ -15,8 +15,8 @@ const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
  * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
  *
  * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()), and the keys in
- * the region's scale are coloured in the region colour, the tonic marked with dots as in the circles (see
- * setScale()), and the chord's notes have a band in the chord colour (see setChord()).
+ * the region's scale are coloured in the region colour (see setScale()), and the chord's notes have a band in the
+ * chord colour (see setChord()). As in the circles, the region's root has a red dot, and the chord's root a yellow one.
  *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
@@ -43,12 +43,16 @@ export class PianoKeyboard {
       }
       const label = document.createElement('span');
       label.className = 'label';
-      // The tonic's yellow and red dots, as in the circles (only shown on the tonic's keys)
-      const left = document.createElement('span');
-      left.className = 'dot left';
-      const right = document.createElement('span');
-      right.className = 'dot right';
-      element.append(label, left, right);
+      // The root dots, as in the circles: red on the region's root (tonic), yellow on the chord's root. Each is
+      // only shown on its root's keys
+      const dots = document.createElement('span');
+      dots.className = 'dots';
+      for (const root of ['chord-root', 'tonic']) {
+        const dot = document.createElement('span');
+        dot.className = `dot ${root}`;
+        dots.append(dot);
+      }
+      element.append(label, dots);
       this.labels.set(key.note, label);
 
       element.addEventListener('pointerdown', (event) => {
@@ -72,7 +76,7 @@ export class PianoKeyboard {
 
   /**
    * Colour the keys whose pitch class is in `scale` (e.g. the diatonic level, for the current region), and mark
-   * its root (the tonic) with a yellow and a red dot.
+   * its root (the tonic) with a red dot.
    */
   setScale(scale: PitchClassSet): void {
     for (const [note, key] of this.keys) {
@@ -82,10 +86,15 @@ export class PianoKeyboard {
     }
   }
 
-  /** Mark the keys whose pitch class is in `chord` (e.g. the triadic level, for the current chord). */
+  /**
+   * Mark the keys whose pitch class is in `chord` (e.g. the triadic level, for the current chord), and its root
+   * with a yellow dot.
+   */
   setChord(chord: PitchClassSet): void {
     for (const [note, key] of this.keys) {
-      key.classList.toggle('chord-tone', chord.contains(new PitchClass(note)));
+      const pc = new PitchClass(note);
+      key.classList.toggle('chord-tone', chord.contains(pc));
+      key.classList.toggle('chord-root', chord.isRoot(pc));
     }
   }
 

@@ -5,8 +5,9 @@ import { Level } from '../model/Level.ts';
 export const Palette = {
   off: '#c0c0c0', // lightGray: a pitch class not in the level
   line: '#0000ff', // blue: circles, dividers and labels
-  rootDotLeft: '#ffff00', // yellow
-  rootDotRight: '#ff0000', // red
+  regionRootDot: '#ff0000', // red: the region's root (tonic), in the diatonic ring
+  chordRootDot: '#ffff00', // yellow: the chord's root, in the root ring
+  dotOutline: '#222222',
 } as const;
 
 /** The colour of a pitch class that is in a level. */
