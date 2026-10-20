@@ -27,7 +27,7 @@ export class PianoKeyboard {
   private readonly timers = new Map<number, number>();
   private readonly labels = new Map<number, HTMLElement>();
 
-  constructor(container: HTMLElement, onPress: (note: number) => void, low = 60, high = 83) {
+  constructor(container: HTMLElement, onPress: (note: number) => void, low = 48, high = 83) {
     const layout = pianoKeys(low, high);
     const whiteWidth = 100 / whiteKeyCount(layout);
 
@@ -83,15 +83,11 @@ export class PianoKeyboard {
     }
   }
 
-  /**
-   * Mark the keys whose pitch class is in `chord` (e.g. the triadic level, for the current chord), and its root
-   * with a yellow ring round its label.
-   */
-  setChord(chord: PitchClassSet): void {
+  /** Mark the chord's actual keys (`notes`, as MIDI note numbers), and its root key with a yellow ring round its label. */
+  setChord(notes: readonly number[], root: number): void {
     for (const [note, key] of this.keys) {
-      const pc = new PitchClass(note);
-      key.classList.toggle('chord-tone', chord.contains(pc));
-      key.classList.toggle('chord-root', chord.isRoot(pc));
+      key.classList.toggle('chord-tone', notes.includes(note));
+      key.classList.toggle('chord-root', note === root);
     }
   }
 

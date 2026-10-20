@@ -15,6 +15,13 @@ export const MIDDLE_C = 60;
 /** The region's root is played an octave below middle C, as a bass note under the chord. */
 export const REGION_ROOT_BASE = MIDDLE_C - 12;
 
+/**
+ * The chord's root stays between C3 and E5 (MIDI 48 to 76), so all its notes - up to 7 semitones above the root - are
+ * on the keyboard (C3 to B5). Past either end it wraps round to the other, keeping its pitch class.
+ */
+export const CHORD_ROOT_LOWEST = 48;
+export const CHORD_ROOT_HIGHEST = 76;
+
 /** Which changed: the region (its root or type), or the chord. */
 export type Change = 'region' | 'chord';
 
@@ -22,7 +29,8 @@ type Listener = (space: TonalPitchSpace, change: Change) => void;
 
 /**
  * The state of the app: a region (key) and a chord within it, each with a root and a type
- * (e.g. a harmonic minor region, or a minor chord).
+ * (e.g. a harmonic minor region, or a minor chord). The region's root is a pitch class; the chord's root is an
+ * actual note (a MIDI note number), so the chord can move up and down octaves.
  * The chromatic and diatonic levels are built on the region, the triadic, fifth and root levels on the chord.
  *
  * Listeners are told whenever the region or chord changes, and which one.
@@ -30,7 +38,7 @@ type Listener = (space: TonalPitchSpace, change: Change) => void;
 export class TonalPitchSpace {
   private _regionRoot: PitchClass;
   private _regionType: RegionType;
-  private _chordRoot: PitchClass;
+  private _chordRootNote: number;
   private _chordType: ChordType;
   private readonly listeners: Listener[] = [];
 
@@ -41,7 +49,7 @@ export class TonalPitchSpace {
     chordType = ChordType.Major,
   ) {
     this._regionRoot = regionRoot;
-    this._chordRoot = chordRoot;
+    this._chordRootNote = MIDDLE_C + chordRoot.value;
     this._regionType = regionType;
     this._chordType = chordType;
   }
@@ -64,13 +72,14 @@ export class TonalPitchSpace {
     this.changed('region');
   }
 
+  /** The chord's root, as a pitch class. */
   get chordRoot(): PitchClass {
-    return this._chordRoot;
+    return new PitchClass(this._chordRootNote);
   }
 
-  set chordRoot(pc: PitchClass) {
-    this._chordRoot = pc;
-    this.changed('chord');
+  /** The chord's root, as a note: a MIDI note number (60 = middle C). */
+  get chordRootNote(): number {
+    return this._chordRootNote;
   }
 
   get chordType(): ChordType {
@@ -87,9 +96,29 @@ export class TonalPitchSpace {
     this.regionRoot = this._regionRoot.transpose(semitones);
   }
 
-  /** Move the chord root round the circle (+1 = clockwise, a semitone up). */
+  /** Move the chord root up or down a number of semitones (+1 = clockwise round the circle). */
   stepChord(semitones: number): void {
-    this.chordRoot = this._chordRoot.transpose(semitones);
+    this.moveChordRoot(this._chordRootNote + semitones);
+  }
+
+  /**
+   * Move the chord's root to the next note up (direction +1) or down (-1) in one level of the pitch space: the next
+   * semitone (chromatic), the next note of the region's scale (diatonic), the next note of the chord (triadic),
+   * the root's fifth or root (fifth), or the root an octave away (root).
+   */
+  stepChordIn(level: Level, direction: 1 | -1): void {
+    const notes = this.level(level);
+    let note = this._chordRootNote;
+    do note += direction; while (!notes.contains(new PitchClass(note)));
+    this.moveChordRoot(note);
+  }
+
+  // Past either end of the range, the root wraps round to the other end, keeping its pitch class
+  private moveChordRoot(note: number): void {
+    if (note > CHORD_ROOT_HIGHEST) note = CHORD_ROOT_LOWEST + (note - CHORD_ROOT_LOWEST) % 12;
+    else if (note < CHORD_ROOT_LOWEST) note = CHORD_ROOT_HIGHEST - (CHORD_ROOT_HIGHEST - note) % 12;
+    this._chordRootNote = note;
+    this.changed('chord');
   }
 
   /** Change the region to the next type: major, minor, harmonic minor, major... */
@@ -109,12 +138,12 @@ export class TonalPitchSpace {
 
   /** e.g. "C major" */
   get chordName(): string {
-    return `${this._chordRoot.name} ${this._chordType}`;
+    return `${this.chordRoot.name} ${this._chordType}`;
   }
 
   /** The pitch classes in one level, for the current region and chord. */
   level(level: Level): PitchClassSet {
-    const root = level <= Level.Diatonic ? this._regionRoot : this._chordRoot;
+    const root = level <= Level.Diatonic ? this._regionRoot : this.chordRoot;
     return PitchClassSet.fromIntervals(this.shape(level)).rotate(root.value);
   }
 
@@ -123,10 +152,9 @@ export class TonalPitchSpace {
     return base + this._regionRoot.value;
   }
 
-  /** MIDI note numbers for the chord in root position, starting from the octave of middle C. */
-  chordMidiNotes(base = MIDDLE_C): number[] {
-    const root = this._chordRoot.value;
-    return triadIntervals(this._chordType).map((interval) => base + root + interval);
+  /** MIDI note numbers for the chord, in root position from its root note. */
+  chordMidiNotes(): number[] {
+    return triadIntervals(this._chordType).map((interval) => this._chordRootNote + interval);
   }
 
   onChange(listener: Listener): void {

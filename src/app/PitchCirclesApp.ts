@@ -33,6 +33,9 @@ const capitalise = (text: string) => text[0].toUpperCase() + text.slice(1);
  * The app. It owns the model (TonalPitchSpace), and wires the controls and keys to it. Every control is on show
  * (buttons, radio buttons, switches and sliders), and changes take effect straight away.
  *
+ * The arrows on each ring move the chord by that ring's step (see TonalPitchSpace.stepChordIn()), so it can move
+ * up and down octaves, which the three-octave keyboard shows.
+ *
  * Whenever the model changes, everything is redrawn. Changing the region plays its root (an octave below middle C);
  * changing the chord plays the chord - unless that part is repeating, when the next beat plays it instead.
  * The repeat switches play the chord and/or the region's root on every beat, at the Tempo slider's speed.
@@ -77,11 +80,7 @@ export class PitchCirclesApp {
     });
 
     this.circles = new PitchCirclesView(elements.canvas);
-    this.ringArrows = new RingArrows(
-      elements.stage,
-      (semitones) => this.space.stepRegion(semitones),
-      (semitones) => this.space.stepChord(semitones),
-    );
+    this.ringArrows = new RingArrows(elements.stage, (level, direction) => this.space.stepChordIn(level, direction));
 
     // Play once, the repeats, tempo and volume
     const playOnce = document.createElement('button');
@@ -182,8 +181,8 @@ export class PitchCirclesApp {
   /** Play notes, and show them on the keyboard. */
   private play(notes: readonly number[], role: KeyRole): void {
     this.player.play(notes);
-    // The region's root and the chord light every octave of their notes; a clicked key lights just that key
-    this.piano.show(notes, role, this.player.soundingSeconds, role !== 'played');
+    // The region's root lights every octave of its note; the chord and a clicked key light just their own keys
+    this.piano.show(notes, role, this.player.soundingSeconds, role === 'region');
   }
 
   private onKey(event: KeyboardEvent): void {
@@ -225,6 +224,6 @@ export class PitchCirclesApp {
     this.info.update(space);
     this.piano.setLabels(this.displayMode);
     this.piano.setScale(space.level(Level.Diatonic));
-    this.piano.setChord(space.level(Level.Triadic));
+    this.piano.setChord(space.chordMidiNotes(), space.chordRootNote);
   }
 }

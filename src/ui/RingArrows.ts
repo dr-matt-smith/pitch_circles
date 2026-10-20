@@ -3,33 +3,36 @@ import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import type { CircleGeometry } from '../view/CircleGeometry.ts';
 import { arrowSize, ringArrowPlacements } from '../view/ringArrowLayout.ts';
 
+// What each ring's arrows move the chord's root to, for their tooltips
+const STEPS: Record<Level, string> = {
+  [Level.Chromatic]: 'the next semitone',
+  [Level.Diatonic]: 'the next note of the region\'s scale',
+  [Level.Triadic]: 'the next note of the chord',
+  [Level.Fifth]: 'the next note of its open fifth (root or fifth)',
+  [Level.Root]: 'the next octave',
+};
+
 /**
- * A "<" and ">" button on every ring of the circles, beside the ring's root, to move it round: on the chromatic and
- * diatonic rings they move the region, on the triadic, fifth and root rings the chord. They are HTML buttons laid
- * over the canvas, and move round with the root.
+ * A "<" and ">" button on every ring of the circles, beside the chord's root, to move the chord by that ring's step:
+ * to the next note down or up in that level of the pitch space (see TonalPitchSpace.stepChordIn()). They are HTML
+ * buttons laid over the canvas, and move round with the chord's root.
  */
 export class RingArrows {
   private readonly buttons: { level: Level; back: HTMLButtonElement; forward: HTMLButtonElement }[];
 
-  constructor(container: HTMLElement, onStepRegion: (semitones: number) => void, onStepChord: (semitones: number) => void) {
-    this.buttons = LEVELS.map((level) => {
-      const isRegion = RingArrows.isRegionLevel(level);
-      const step = isRegion ? onStepRegion : onStepChord;
-      const what = isRegion ? 'Region' : 'Chord';
-      return {
-        level,
-        back: RingArrows.button(container, '<', `${what} root anticlockwise, down a semitone`, () => step(-1)),
-        forward: RingArrows.button(container, '>', `${what} root clockwise, up a semitone`, () => step(+1)),
-      };
-    });
+  constructor(container: HTMLElement, onStep: (level: Level, direction: 1 | -1) => void) {
+    this.buttons = LEVELS.map((level) => ({
+      level,
+      back: RingArrows.button(container, '<', `Chord root down to ${STEPS[level]}`, () => onStep(level, -1)),
+      forward: RingArrows.button(container, '>', `Chord root up to ${STEPS[level]}`, () => onStep(level, +1)),
+    }));
   }
 
-  /** Put the buttons beside each ring's root. */
+  /** Put the buttons beside the chord's root, on each ring. */
   update(geometry: CircleGeometry, space: TonalPitchSpace): void {
     const size = arrowSize(geometry);
     for (const { level, back, forward } of this.buttons) {
-      const root = RingArrows.isRegionLevel(level) ? space.regionRoot : space.chordRoot;
-      const places = ringArrowPlacements(geometry, level, root);
+      const places = ringArrowPlacements(geometry, level, space.chordRoot);
       for (const [button, place] of [[back, places.back], [forward, places.forward]] as const) {
         button.style.width = button.style.height = `${size}px`;
         button.style.fontSize = `${Math.round(size * 0.6)}px`;
@@ -38,10 +41,6 @@ export class RingArrows {
         button.style.transform = `rotate(${place.rotation}rad)`;
       }
     }
-  }
-
-  private static isRegionLevel(level: Level): boolean {
-    return level <= Level.Diatonic;
   }
 
   private static button(container: HTMLElement, text: string, title: string, run: () => void): HTMLButtonElement {

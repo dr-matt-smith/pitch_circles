@@ -374,4 +374,13 @@ main {
   .panel {
     align-self: stretch;
   }
+
+  /* three octaves of keys are narrow on a phone: smaller labels */
+  #piano .white {
+    font-size: 9px;
+  }
+
+  #piano .black {
+    font-size: 7px;
+  }
 }
