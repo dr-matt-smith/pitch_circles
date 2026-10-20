@@ -32,7 +32,6 @@ body {
   box-sizing: border-box;
   border: 1px solid #222222;
   border-radius: 0 0 4px 4px;
-  transition: background-color 0.25s; /* fade out when a note ends */
   /* the label, along the bottom of the key */
   display: flex;
   align-items: flex-end;
@@ -44,7 +43,7 @@ body {
 #piano .white {
   height: 100%;
   background: #ffffff;
-  padding-bottom: 4px;
+  padding-bottom: 7px;
   font-size: 12px;
   color: #0000ff; /* the circles' label colour */
 }
@@ -53,15 +52,24 @@ body {
   height: 60%;
   background: #222222;
   z-index: 1;
-  padding-bottom: 3px;
+  padding-bottom: 6px;
   font-size: 10px;
   color: #ffffff;
 }
 
-/* Keys in the region's scale: filled in the region colour, like the diatonic ring of the circles */
+/* Keys in the region's scale: filled in the region colour, like the diatonic ring of the circles, with a ring in
+   their own colour (white or black) so you can still tell which keys are which */
 #piano .in-scale {
   background: #ff00ff;
   color: #ffffff;
+}
+
+#piano .white.in-scale {
+  box-shadow: inset 0 0 0 3px #ffffff;
+}
+
+#piano .black.in-scale {
+  box-shadow: inset 0 0 0 3px #222222;
 }
 
 /* The chord's notes: a band across the bottom of the key, behind the label, in the triadic ring's colour. The rest
@@ -71,74 +79,65 @@ body {
   color: #0000ff;
 }
 
-/* Lit keys: the region's root in a darker region colour (so it shows on the scale's colour), the chord's notes in
-   the chord colour (as in the info line), and a clicked key in the circles' line colour */
-#piano .lit {
-  color: #ffffff;
-  transition: none; /* light up straight away */
+/* The label: in a circle, ringed like the circles' dots - red on the region's root (tonic), yellow on the chord's
+   root, and both (yellow inside red) on a key that is both. The thin dark edge keeps a yellow ring visible */
+#piano .label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
 }
 
-#piano .lit.region {
+#piano .tonic .label {
+  box-shadow: 0 0 0 2px #ff0000, 0 0 0 3px #222222;
+}
+
+#piano .chord-root .label {
+  box-shadow: 0 0 0 2px #ffff00, 0 0 0 3px #222222;
+}
+
+#piano .tonic.chord-root .label {
+  box-shadow: 0 0 0 2px #ffff00, 0 0 0 4px #ff0000, 0 0 0 5px #222222;
+}
+
+/* A playing note: a disc in the top third of the key, so the key's own colours still show. Dark purple for the
+   region's root, red for the chord's notes, blue for a clicked key; white-edged, to show up on any key */
+#piano .marker {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  width: 30%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #222222;
+  opacity: 0;
+  transition: opacity 0.25s; /* fade out when the note ends */
+}
+
+#piano .black .marker {
+  width: 55%;
+}
+
+#piano .lit .marker {
+  opacity: 1;
+  transition: none; /* appear straight away */
+}
+
+#piano .lit.region .marker {
   background: #8800aa;
 }
 
-#piano .lit.chord {
+#piano .lit.chord .marker {
   background: #ff0000;
 }
 
-#piano .lit.played {
+#piano .lit.played .marker {
   background: #0000ff;
-}
-
-/* A coloured key (in the scale, or lit) has a ring inside its border in its own colour - white for a white key,
-   black for a black key - so you can still tell which keys are which, and neighbouring keys stay distinct */
-#piano .white.in-scale,
-#piano .white.lit {
-  box-shadow: inset 0 0 0 3px #ffffff;
-}
-
-#piano .black.in-scale,
-#piano .black.lit {
-  box-shadow: inset 0 0 0 3px #222222;
-}
-
-/* The root dots, as in the circles: red on the region's root (tonic), yellow on the chord's root. Side by side,
-   centred above the label, when a key is both */
-#piano .dots {
-  position: absolute;
-  bottom: 22px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-}
-
-#piano .black .dots {
-  bottom: 17px;
-}
-
-#piano .dot {
-  display: none;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  border: 1px solid #222222;
-}
-
-#piano .black .dot {
-  width: 6px;
-  height: 6px;
-}
-
-#piano .tonic .dot.tonic {
-  display: block;
-  background: #ff0000;
-}
-
-#piano .chord-root .dot.chord-root {
-  display: block;
-  background: #ffff00;
 }
 
 #buttons {

@@ -11,12 +11,14 @@ const ROLES: readonly KeyRole[] = ['region', 'chord', 'played'];
 const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
 
 /**
- * A piano keyboard drawn with HTML elements, which lights up the keys being played.
- * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
+ * A piano keyboard drawn with HTML elements, which shows the keys being played with a coloured disc near the top
+ * of each key, leaving the key's own colours visible. A disc stays for as long as its note sounds, so overlapping
+ * notes can show at once.
  *
  * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()), and the keys in
  * the region's scale are coloured in the region colour (see setScale()), and the chord's notes have a band in the
- * chord colour (see setChord()). As in the circles, the region's root has a red dot, and the chord's root a yellow one.
+ * chord colour (see setChord()). As in the circles' dots, the region's root has a red ring round its label, and the
+ * chord's root a yellow one.
  *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
@@ -41,18 +43,13 @@ export class PianoKeyboard {
         element.style.left = `${key.whiteIndex * whiteWidth}%`;
         element.style.width = `${whiteWidth}%`;
       }
+      // The label, which has a red ring round it on the region's root (tonic) and a yellow one on the chord's root
       const label = document.createElement('span');
       label.className = 'label';
-      // The root dots, as in the circles: red on the region's root (tonic), yellow on the chord's root. Each is
-      // only shown on its root's keys
-      const dots = document.createElement('span');
-      dots.className = 'dots';
-      for (const root of ['chord-root', 'tonic']) {
-        const dot = document.createElement('span');
-        dot.className = `dot ${root}`;
-        dots.append(dot);
-      }
-      element.append(label, dots);
+      // The disc shown in the top third of the key while its note sounds (see show())
+      const marker = document.createElement('span');
+      marker.className = 'marker';
+      element.append(label, marker);
       this.labels.set(key.note, label);
 
       element.addEventListener('pointerdown', (event) => {
@@ -76,7 +73,7 @@ export class PianoKeyboard {
 
   /**
    * Colour the keys whose pitch class is in `scale` (e.g. the diatonic level, for the current region), and mark
-   * its root (the tonic) with a red dot.
+   * its root (the tonic) with a red ring round its label.
    */
   setScale(scale: PitchClassSet): void {
     for (const [note, key] of this.keys) {
@@ -88,7 +85,7 @@ export class PianoKeyboard {
 
   /**
    * Mark the keys whose pitch class is in `chord` (e.g. the triadic level, for the current chord), and its root
-   * with a yellow dot.
+   * with a yellow ring round its label.
    */
   setChord(chord: PitchClassSet): void {
     for (const [note, key] of this.keys) {
@@ -99,7 +96,7 @@ export class PianoKeyboard {
   }
 
   /**
-   * Light up `notes` for `seconds`. Notes outside the keyboard are ignored.
+   * Show `notes` as playing (a disc in the role's colour) for `seconds`. Notes outside the keyboard are ignored.
    * With `allOctaves`, every key with the same pitch class lights up too: e.g. every C, for a C.
    */
   show(notes: readonly number[], role: KeyRole, seconds: number, allOctaves = false): void {
