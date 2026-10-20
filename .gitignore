@@ -1,0 +1,7 @@
+dist/
+test_output/
+.celbridge/
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
