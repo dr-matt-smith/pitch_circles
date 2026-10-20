@@ -4,7 +4,6 @@ import type { CircleGeometry, Point } from './CircleGeometry.ts';
 /** Where one of a ring's arrow buttons goes. */
 export interface ArrowPlacement {
   centre: Point;
-  rotation: number; // radians: turns the arrow to point along the ring (0 at 12 o'clock)
 }
 
 const SEGMENT = (2 * Math.PI) / 12;
@@ -20,8 +19,8 @@ export function arrowSize(geometry: CircleGeometry, ring: number): number {
 }
 
 /**
- * Where a ring's "<" (anticlockwise) and ">" (clockwise) arrows go: either side of the label of the root, near the
- * edges of its segment, in the middle of the ring, turned to point along it.
+ * Where a ring's anticlockwise and clockwise arrows go: either side of the label of the root, near the edges of its
+ * segment, in the middle of the ring - the anticlockwise one on the anticlockwise side.
  *
  * Plain maths, no drawing, so it can be tested on its own.
  */
@@ -32,9 +31,8 @@ export function ringArrowPlacements(
 ): { back: ArrowPlacement; forward: ArrowPlacement } {
   const angle = geometry.angleOf(root);
   const radius = geometry.ringMiddle(ring);
-  const rotation = angle + Math.PI / 2;
   return {
-    back: { centre: geometry.pointAt(angle - ARROW_ANGLE, radius), rotation },
-    forward: { centre: geometry.pointAt(angle + ARROW_ANGLE, radius), rotation },
+    back: { centre: geometry.pointAt(angle - ARROW_ANGLE, radius) },
+    forward: { centre: geometry.pointAt(angle + ARROW_ANGLE, radius) },
   };
 }

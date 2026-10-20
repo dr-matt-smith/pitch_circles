@@ -10,13 +10,11 @@ Deno.test('ring arrows sit either side of the root, back to the left at the top'
   assertAlmostEquals(back.centre.y, forward.centre.y);
   assertEquals(back.centre.x < 100 && forward.centre.x > 100, true);
   assertAlmostEquals((back.centre.x + forward.centre.x) / 2, 100);
-  assertAlmostEquals(back.rotation, 0); // upright at the top
 });
 
-Deno.test('ring arrows turn to point along the ring', () => {
+Deno.test('the anticlockwise arrow is on the anticlockwise side, wherever the root is', () => {
   const { back, forward } = ringArrowPlacements(geo, 2, new PitchClass(6)); // F#, at the bottom
-  assertAlmostEquals(back.rotation, Math.PI); // upside down: ">" points left, which is clockwise down there
-  assertEquals(back.centre.x > 100 && forward.centre.x < 100, true);
+  assertEquals(back.centre.x > 100 && forward.centre.x < 100, true); // at the bottom, anticlockwise is to the right
 });
 
 Deno.test('ring arrows sit inside the root\'s segment, and are smaller on the inner rings', () => {

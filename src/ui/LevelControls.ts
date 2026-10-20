@@ -1,4 +1,5 @@
 import { RadioGroup, RadioOption } from './RadioGroup.ts';
+import { turnButton } from './turnButton.ts';
 
 export interface LevelControlsOptions<T> {
   title: string; // e.g. "Region"
@@ -10,7 +11,7 @@ export interface LevelControlsOptions<T> {
 }
 
 /**
- * The controls for the region or the chord: "<" and ">" to move its root round the circle, its root's name, and
+ * The controls for the region or the chord: anticlockwise and clockwise arrows to move its root round the circle, its root's name, and
  * radio buttons for its type (e.g. major, minor).
  */
 export class LevelControls<T> {
@@ -26,9 +27,9 @@ export class LevelControls<T> {
     const title = document.createElement('h2');
     title.textContent = options.title;
 
-    const back = LevelControls.button('<', `${options.title} root down a semitone (${options.keysHint})`, () =>
+    const back = turnButton(-1, `${options.title} root anticlockwise, down a semitone (${options.keysHint})`, () =>
       options.onStep(-1));
-    const forward = LevelControls.button('>', `${options.title} root up a semitone (${options.keysHint})`, () =>
+    const forward = turnButton(+1, `${options.title} root clockwise, up a semitone (${options.keysHint})`, () =>
       options.onStep(+1));
 
     this.root = document.createElement('span');
@@ -44,14 +45,5 @@ export class LevelControls<T> {
     this.root.textContent = rootName;
     this.types.value = type;
     this.types.enabled = typeChoosable;
-  }
-
-  private static button(text: string, title: string, run: () => void): HTMLButtonElement {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = text;
-    button.title = title;
-    button.addEventListener('click', run);
-    return button;
   }
 }
