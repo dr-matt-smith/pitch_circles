@@ -98,8 +98,13 @@ export class PianoKeyboard {
   /**
    * Show `notes` as playing (a disc in the role's colour) for `seconds`. Notes outside the keyboard are ignored.
    * With `allOctaves`, every key with the same pitch class lights up too: e.g. every C, for a C.
+   *
+   * Any notes still showing in the same role are hidden first, even if they are still sounding: a new chord
+   * replaces the old chord's discs, a new region root the old one's, and a clicked key the last clicked key's.
    */
   show(notes: readonly number[], role: KeyRole, seconds: number, allOctaves = false): void {
+    this.hide(role);
+
     const pitchClasses = new Set(notes.map((note) => new PitchClass(note).value));
     const lit = allOctaves ? [...this.keys.keys()].filter((note) => pitchClasses.has(new PitchClass(note).value)) : notes;
 
@@ -110,6 +115,15 @@ export class PianoKeyboard {
       key.classList.remove(...ROLES);
       key.classList.add('lit', role);
       this.timers.set(note, setTimeout(() => key.classList.remove('lit', ...ROLES), seconds * 1000));
+    }
+  }
+
+  /** Hide the discs of every note showing in `role`. */
+  private hide(role: KeyRole): void {
+    for (const [note, key] of this.keys) {
+      if (!key.classList.contains(role)) continue;
+      clearTimeout(this.timers.get(note));
+      key.classList.remove('lit', role);
     }
   }
 }

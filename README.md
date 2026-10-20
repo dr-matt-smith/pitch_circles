@@ -27,8 +27,9 @@ format as Sound Gen's instrument editor and the Chip Sequencer, so they sound th
 the Instrument dropdown. The keyboard along the top shows the region's scale as the diatonic ring does: its keys
 are coloured magenta, and the tonic has a red ring round its label. The chord's notes have a pink band, as in the
 triadic ring, and the chord's root a yellow ring round its label. While a note sounds, a disc near the top of its
-keys (in every octave) shows it playing: dark purple for the region's root, red for the chord's notes. Click the keys
-(or drag across them) to play single notes, shown in blue. The keys are labelled to match the Display setting. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
+keys (in every octave) shows it playing: dark purple for the region's root, red for the chord's notes. Each new
+region root or chord replaces the old one's discs. Click the keys (or drag across them) to play single notes, shown
+in blue. The keys are labelled to match the Display setting. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
 and add an import for it to `src/audio/instruments.ts`. The instruments are built into `app.js`, so
 `dist/index.html` still works opened straight from disk.
 
