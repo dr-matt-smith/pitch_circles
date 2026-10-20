@@ -1,19 +1,23 @@
 import { pianoKeys, whiteKeyCount } from './pianoLayout.ts';
 
-/** Why a key is lit: it is the region's root, or a note of the chord. Used as a CSS class. */
-export type KeyRole = 'region' | 'chord';
+/** Why a key is lit: it is the region's root, a note of the chord, or a key that was clicked. Used as a CSS class. */
+export type KeyRole = 'region' | 'chord' | 'played';
+
+const ROLES: readonly KeyRole[] = ['region', 'chord', 'played'];
 
 const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
 
 /**
  * A piano keyboard drawn with HTML elements, which lights up the keys being played.
  * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
+ *
+ * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
 export class PianoKeyboard {
   private readonly keys = new Map<number, HTMLElement>();
   private readonly timers = new Map<number, number>();
 
-  constructor(container: HTMLElement, low = 60, high = 83) {
+  constructor(container: HTMLElement, onPress: (note: number) => void, low = 60, high = 83) {
     const layout = pianoKeys(low, high);
     const whiteWidth = 100 / whiteKeyCount(layout);
 
@@ -30,6 +34,13 @@ export class PianoKeyboard {
         element.style.width = `${whiteWidth}%`;
         if (key.name.startsWith('C')) element.textContent = key.name; // label each C, to show the octaves
       }
+      element.addEventListener('pointerdown', (event) => {
+        event.preventDefault(); // don't start selecting text, or take the focus from the page
+        onPress(key.note);
+      });
+      element.addEventListener('pointerenter', (event) => {
+        if (event.buttons === 1) onPress(key.note); // dragging across the keys
+      });
       container.append(element);
       this.keys.set(key.note, element);
     }
@@ -41,9 +52,9 @@ export class PianoKeyboard {
       const key = this.keys.get(note);
       if (!key) continue;
       clearTimeout(this.timers.get(note));
-      key.classList.remove('region', 'chord');
+      key.classList.remove(...ROLES);
       key.classList.add('lit', role);
-      this.timers.set(note, setTimeout(() => key.classList.remove('lit', 'region', 'chord'), seconds * 1000));
+      this.timers.set(note, setTimeout(() => key.classList.remove('lit', ...ROLES), seconds * 1000));
     }
   }
 }

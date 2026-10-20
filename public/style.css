@@ -26,20 +26,24 @@ body {
 
 #piano .key {
   position: absolute;
+  cursor: pointer;
+  user-select: none;
   top: 0;
   box-sizing: border-box;
+  border: 1px solid #222222;
   border-radius: 0 0 4px 4px;
-  transition: background-color 0.25s; /* fade out when a note ends */
+  transition: background-color 0.25s, box-shadow 0.25s; /* fade out when a note ends */
 }
 
+/* Lit keys keep their dark border, with a white ring inside it, so neighbouring lit keys stay distinct */
 #piano .lit {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
   transition: none; /* light up straight away */
 }
 
 #piano .white {
   height: 100%;
   background: #ffffff;
-  border: 1px solid #444444;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -61,6 +65,11 @@ body {
 
 #piano .lit.chord {
   background: #ff0000;
+}
+
+/* A key that was clicked: in the circles' line colour */
+#piano .lit.played {
+  background: #0000ff;
 }
 
 #buttons {

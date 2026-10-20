@@ -21,7 +21,8 @@ export interface AppElements {
 /**
  * The app. It owns the model (TonalPitchSpace), and wires the buttons and keys to it.
  * Whenever the model changes, the circles and info panel are redrawn. Changing the region plays its root note;
- * changing the chord plays the chord's three notes. The keyboard along the top shows the notes as they play.
+ * changing the chord plays the chord's three notes. The keyboard along the top shows the notes as they play,
+ * and clicking its keys plays them.
  *
  * Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type, D = display mode.
  */
@@ -37,7 +38,7 @@ export class PitchCirclesApp {
 
   constructor(elements: AppElements) {
     this.player = 'AudioContext' in globalThis ? new SynthNotePlayer() : new SilentNotePlayer();
-    this.piano = new PianoKeyboard(elements.piano);
+    this.piano = new PianoKeyboard(elements.piano, (note) => this.play([note], 'played'));
     this.circles = new PitchCirclesView(elements.canvas);
     this.info = new InfoPanel(elements.info);
 
