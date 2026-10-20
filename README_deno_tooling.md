@@ -4,8 +4,8 @@ Celbridge does all of this for you: open `Pitch Circles.celbridge` and see `CELB
 Celbridge: in particular **Linux** users, as there's no Linux version of Celbridge yet, and anyone who'd rather work
 in VS Code or another editor. It gets you the same set-up with a few commands.
 
-This project only needs [Deno](https://deno.com). There's no Node.js or npm: Deno downloads Phaser by itself the
-first time you build.
+This project only needs [Deno](https://deno.com). There's no Node.js or npm, and no libraries to download: the app
+uses only what's built into the browser (a canvas, and Web Audio for the sound).
 
 ## 1. Install Deno (once)
 
@@ -22,18 +22,21 @@ deno task dev
 
 This is what Celbridge's console runs when the project opens. It:
 
-1. **builds** `src/` (TypeScript) into `dist/app.js`, and copies everything in `public/` (the page, CSS, images,
-   sounds, maps) into `dist/`. After the first build, only files that have changed are copied
+1. **builds** `src/` (TypeScript) into `dist/app.js`, and copies everything in `public/` (the page, its CSS and
+   icon) into `dist/`. After the first build, only files that have changed are copied
 2. **tests** everything in `tests/`, and writes a report to `test_output/index.html`. The report also lists
    TypeScript errors and lint warnings
 3. **watches** `src/`, `public/` and `tests/`, and does it all again every time you save a file
 
 Leave it running. Press **Ctrl+C** to stop it.
 
-## 3. Preview the game in a browser
+## 3. Preview the app in a browser
 
-Celbridge shows `dist/index.html` beside the console. Without Celbridge, you need a browser and a small web
-server. In a **second** terminal, in the project folder:
+Celbridge shows `dist/index.html` beside the console. Without Celbridge, the simplest way is to open
+`dist/index.html` in any browser (double-click it). The whole app is one script, `dist/app.js`, so it works
+opened straight from your disk.
+
+Or, to use a small web server instead, in a **second** terminal, in the project folder:
 
 ```
 deno task serve
@@ -44,12 +47,11 @@ Then open **http://127.0.0.1:8000** in any browser (Chrome, Firefox, Edge, Safar
 After you save a file, wait for `dist/ is up to date` in the first terminal, then **refresh** the browser. The page
 doesn't reload by itself.
 
-### Why do I need a server?
+### When is a server needed?
 
-If you open `dist/index.html` straight from your disk (double-clicking it, so the address starts with `file://`),
-the game shows a blank or black screen. Browsers don't let a page opened from disk load other files the way
-Phaser does it, so all its images, sounds and maps fail to load. A web server, even one on your own computer,
-fixes that. `deno task serve` serves `dist/` at http://127.0.0.1:8000, and tells the browser not to keep old
+Not for this app as it is. But browsers don't let a page opened from disk (an address starting `file://`) load
+other files with `fetch()`, so if you add images, sounds or data files that the code loads, open the app through
+`deno task serve` instead. It serves `dist/` at http://127.0.0.1:8000, and tells the browser not to keep old
 copies, so a normal refresh always shows your latest build.
 
 If port 8000 is already in use (e.g. by another project's server), stop that one first, or change
@@ -73,7 +75,7 @@ isn't running.
 
 ## The test report
 
-Open `test_output/index.html` in a browser: unlike the game, it works opened straight from your disk. The same
+Open `test_output/index.html` in a browser: like the app, it works opened straight from your disk. The same
 report is in `test_output/summary.md`, and the console shows the test results as each build finishes.
 
 ## Using VS Code

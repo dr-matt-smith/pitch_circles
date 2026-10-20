@@ -1,12 +1,12 @@
 # Pitch Circles in Celbridge (Deno)
 
-A Phaser 4 + TypeScript app, built with Deno. Not using Celbridge? See `README_deno_tooling.md`.
+A TypeScript app (an HTML canvas, no libraries), built with Deno. Not using Celbridge? See `README_deno_tooling.md`.
 
 ## Running it in Celbridge
 
 Open `Pitch Circles.celbridge` in Celbridge. The console at the bottom starts by itself and runs `deno task dev`:
 
-1. **builds** `src/` (TypeScript, plus Phaser from npm) into `dist/app.js`, and copies `public/` (the page and its
+1. **builds** `src/` (TypeScript) into `dist/app.js`, and copies `public/` (the page and its
    CSS) into `dist/`. Only files that have changed are copied
 2. **tests** everything in `tests/`, printing the results in the console and writing a readable report to
    `test_output/index.html`. The report also lists TypeScript errors and lint warnings
@@ -23,7 +23,7 @@ running, press **Ctrl+C** first to stop it.
 | Folder | What goes in it |
 |---|---|
 | `src/` | the app's TypeScript code. `src/main.ts` is where it starts (see `README.md` for the classes) |
-| `public/` | `index.html`, `style.css` and `favicon.png` |
+| `public/` | `index.html`, `style.css` and `favicon.svg` |
 | `tests/` | tests, in files ending `.test.ts` |
 
 ## Files for the Deno build

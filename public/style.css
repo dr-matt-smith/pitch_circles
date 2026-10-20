@@ -1,15 +1,69 @@
+/* The page fills the window (or the Celbridge preview panel) exactly: the buttons along the top, the info line
+   along the bottom, and the circles as big as will fit in between. */
+
+html,
 body {
-    margin: 0;
-    padding: 0;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #0f0f0f;
+  height: 100%;
+  margin: 0;
 }
 
-#app {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  font-family: "Times New Roman", serif;
+}
+
+#buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+}
+
+#buttons button {
+  font: 16px Arial, sans-serif;
+  padding: 8px 14px;
+  min-width: 100px;
+  background: #e8e8ee;
+  border: 1.5px solid #666688;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#buttons button:hover {
+  background: #d0d0e0;
+}
+
+/* min-height: 0 lets this shrink below the canvas's size, so the canvas can be resized to fit */
+main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#circles {
+  display: block;
+}
+
+#info {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  font-size: 20px;
+}
+
+#info .chord {
+  color: #ff0000;
+}
+
+#info .region {
+  color: #ff00ff;
+}
+
+#info .mode {
+  color: #333333;
 }

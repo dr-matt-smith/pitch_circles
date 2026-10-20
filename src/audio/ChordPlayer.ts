@@ -11,16 +11,20 @@ export function midiToFrequency(note: number): number {
 /**
  * Plays chords with the Web Audio API: one soft triangle-wave voice per note, fading out.
  * (Replaces the Java version's javax.sound.midi synthesizer.)
+ *
+ * Browsers only allow sound after the user has clicked or pressed a key, so the AudioContext is made the first
+ * time a chord is played (which is always in response to a click or key press).
  */
 export class WebAudioChordPlayer implements ChordPlayer {
+  private context?: AudioContext;
+
   constructor(
-    private readonly context: AudioContext,
     private readonly duration = 1.2,
     private readonly volume = 0.15,
   ) {}
 
   play(midiNotes: readonly number[]): void {
-    const ctx = this.context;
+    const ctx = this.context ??= new AudioContext();
     if (ctx.state === 'suspended') void ctx.resume();
     const now = ctx.currentTime;
 

@@ -1,5 +1,9 @@
-import StartGame from './game/main.ts';
+import { PitchCirclesApp } from './app/PitchCirclesApp.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
-  StartGame('game-container');
+  new PitchCirclesApp({
+    buttons: document.getElementById('buttons')!,
+    canvas: document.getElementById('circles') as HTMLCanvasElement,
+    info: document.getElementById('info')!,
+  });
 });

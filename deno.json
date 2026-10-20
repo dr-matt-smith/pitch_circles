@@ -8,12 +8,8 @@
     "serve": "deno run --allow-net --allow-read --allow-sys jsr:@std/http@^1/file-server dist --host 127.0.0.1 --port 8000 --no-dir-listing --header \"Cache-Control: no-cache\""
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@^1",
-    "phaser": "npm:phaser@4.0.0"
+    "@std/assert": "jsr:@std/assert@^1"
   },
-  "unstable": [
-    "sloppy-imports"
-  ],
   "exclude": [
     "dist/",
     "test_output/"

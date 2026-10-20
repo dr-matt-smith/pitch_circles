@@ -11,9 +11,9 @@ const SEGMENT = (2 * Math.PI) / PitchClass.COUNT; // 30 degrees, in radians
  * Where everything goes on the pitch circles: the radius of each ring and the angle of each pitch class.
  * Pitch classes go clockwise round a clock face, C at 12 o'clock.
  *
- * Angles are in radians, clockwise from 3 o'clock (as Phaser and the canvas use, since y points down).
+ * Angles are in radians, clockwise from 3 o'clock (as the canvas uses, since y points down).
  *
- * Plain maths, no Phaser, so it can be tested on its own.
+ * Plain maths, no drawing, so it can be tested on its own.
  */
 export class CircleGeometry {
   readonly gap: number;
