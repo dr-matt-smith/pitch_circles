@@ -15,7 +15,7 @@ const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
  * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
  *
  * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()), and the keys in
- * the region's scale are outlined in the region colour (see setScale()).
+ * the region's scale are outlined in the region colour, the tonic more thickly (see setScale()).
  *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
@@ -64,10 +64,15 @@ export class PianoKeyboard {
     }
   }
 
-  /** Outline the keys whose pitch class is in `scale` (e.g. the diatonic level, for the current region). */
+  /**
+   * Outline the keys whose pitch class is in `scale` (e.g. the diatonic level, for the current region), with a
+   * thicker outline for its root (the tonic).
+   */
   setScale(scale: PitchClassSet): void {
     for (const [note, key] of this.keys) {
-      key.classList.toggle('in-scale', scale.contains(new PitchClass(note)));
+      const pc = new PitchClass(note);
+      key.classList.toggle('in-scale', scale.contains(pc));
+      key.classList.toggle('tonic', scale.isRoot(pc));
     }
   }
 
