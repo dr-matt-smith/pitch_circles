@@ -24,10 +24,25 @@ export class SynthNotePlayer implements NotePlayer {
   private context?: AudioContext;
   private output?: AudioNode;
 
+  private _volume: number;
+  private gain?: GainNode;
+
   constructor(
     private readonly noteSeconds = 0.8,
-    private readonly volume = 0.6,
-  ) {}
+    volume = 0.6,
+  ) {
+    this._volume = volume;
+  }
+
+  /** The master volume, 0..1. */
+  get volume(): number {
+    return this._volume;
+  }
+
+  set volume(volume: number) {
+    this._volume = Math.max(0, Math.min(1, volume));
+    if (this.gain) this.gain.gain.value = this._volume;
+  }
 
   get soundingSeconds(): number {
     const { a, d, r } = readInstrument(this.instrument.instrument).adsr;
@@ -54,8 +69,8 @@ export class SynthNotePlayer implements NotePlayer {
 
   // Master volume, then a compressor so overlapping notes (e.g. clicking quickly) never clip
   private createOutput(ctx: AudioContext): AudioNode {
-    const gain = ctx.createGain();
-    gain.gain.value = this.volume;
+    const gain = this.gain = ctx.createGain();
+    gain.gain.value = this._volume;
     const compressor = ctx.createDynamicsCompressor();
     gain.connect(compressor).connect(ctx.destination);
     return gain;

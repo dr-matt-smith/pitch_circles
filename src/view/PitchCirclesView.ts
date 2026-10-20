@@ -50,6 +50,11 @@ export class PitchCirclesView {
     return this.geometry;
   }
 
+  /** Where everything is drawn, for the current size. */
+  get layout(): CircleGeometry {
+    return this.geometry;
+  }
+
   redraw(space: TonalPitchSpace, mode: DisplayMode): void {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

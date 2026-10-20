@@ -1,10 +1,14 @@
 import { PitchCirclesApp } from './app/PitchCirclesApp.ts';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const element = (id: string) => document.getElementById(id)!;
   new PitchCirclesApp({
-    piano: document.getElementById('piano')!,
-    buttons: document.getElementById('buttons')!,
-    canvas: document.getElementById('circles') as HTMLCanvasElement,
-    info: document.getElementById('info')!,
+    piano: element('piano'),
+    levels: element('levels'),
+    play: element('play'),
+    stage: element('stage'),
+    canvas: element('circles') as HTMLCanvasElement,
+    settings: element('settings'),
+    info: element('info'),
   });
 });

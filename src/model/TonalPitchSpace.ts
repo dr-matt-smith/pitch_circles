@@ -12,6 +12,9 @@ const ROOT = [0];
 
 export const MIDDLE_C = 60;
 
+/** The region's root is played an octave below middle C, as a bass note under the chord. */
+export const REGION_ROOT_BASE = MIDDLE_C - 12;
+
 /** Which changed: the region (its root or type), or the chord. */
 export type Change = 'region' | 'chord';
 
@@ -115,8 +118,8 @@ export class TonalPitchSpace {
     return PitchClassSet.fromIntervals(this.shape(level)).rotate(root.value);
   }
 
-  /** The MIDI note number of the region's root, in the octave of middle C. */
-  regionRootMidiNote(base = MIDDLE_C): number {
+  /** The MIDI note number of the region's root, in the octave below middle C (C3 to B3). */
+  regionRootMidiNote(base = REGION_ROOT_BASE): number {
     return base + this._regionRoot.value;
   }
 

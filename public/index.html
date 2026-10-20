@@ -9,8 +9,14 @@
 </head>
 <body>
   <div id="piano" title="Click the keys to play them"></div>
-  <nav id="buttons"></nav>
-  <main><canvas id="circles" aria-label="Tonal pitch space, drawn as concentric pitch circles"></canvas></main>
+  <nav id="levels"></nav>
+  <main>
+    <aside id="play" class="panel"></aside>
+    <div id="stage">
+      <canvas id="circles" aria-label="Tonal pitch space, drawn as concentric pitch circles"></canvas>
+    </div>
+    <aside id="settings" class="panel"></aside>
+  </main>
   <footer id="info"></footer>
   <script src="app.js"></script>
 </body>

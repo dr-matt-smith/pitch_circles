@@ -1,22 +1,18 @@
-import { DisplayMode, displayModeName } from '../model/DisplayMode.ts';
 import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 
-/** The line of text under the circles: the chord and region, and the display mode. */
+/** The line of text under the circles: the region and the chord, in full (e.g. "A harmonic minor"). */
 export class InfoPanel {
-  private readonly chord: HTMLElement;
   private readonly region: HTMLElement;
-  private readonly mode: HTMLElement;
+  private readonly chord: HTMLElement;
 
   constructor(container: HTMLElement) {
-    this.chord = InfoPanel.addSpan(container, 'chord');
     this.region = InfoPanel.addSpan(container, 'region');
-    this.mode = InfoPanel.addSpan(container, 'mode');
+    this.chord = InfoPanel.addSpan(container, 'chord');
   }
 
-  update(space: TonalPitchSpace, mode: DisplayMode): void {
-    this.chord.textContent = `Chord: ${space.chordName}`;
+  update(space: TonalPitchSpace): void {
     this.region.textContent = `Region: ${space.regionName}`;
-    this.mode.textContent = `Labels: ${displayModeName(mode)}`;
+    this.chord.textContent = `Chord: ${space.chordName}`;
   }
 
   private static addSpan(container: HTMLElement, className: string): HTMLElement {
