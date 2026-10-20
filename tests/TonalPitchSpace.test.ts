@@ -16,14 +16,22 @@ Deno.test('C major: each level of the pitch space', () => {
   assertEquals(names(space.level(Level.Root).members()), ['C']);
 });
 
-Deno.test('the region moves the diatonic level, the chord moves the triad levels', () => {
+Deno.test('only the region changes the levels: the chord moves through them', () => {
   const space = new TonalPitchSpace();
   space.stepRegion(7); // G major
   space.stepChord(2); // D major chord
   assertEquals(names(space.level(Level.Diatonic).members()), ['C', 'D', 'E', 'F#', 'G', 'A', 'B']);
   assertEquals(space.level(Level.Diatonic).root()?.name, 'G');
-  assertEquals(names(space.level(Level.Triadic).members()), ['D', 'F#', 'A']);
-  assertEquals(space.level(Level.Root).root()?.name, 'D');
+  assertEquals(names(space.level(Level.Triadic).members()), ['D', 'G', 'B']); // G major's tonic triad
+  assertEquals(names(space.level(Level.Fifth).members()), ['D', 'G']);
+  assertEquals(space.level(Level.Root).root()?.name, 'G');
+  assertEquals(names(space.chordPitchClasses()), ['D', 'F#', 'A']); // the chord itself
+});
+
+Deno.test('a minor region\'s triadic level is its minor tonic triad', () => {
+  const space = new TonalPitchSpace(new PitchClass(9)); // A
+  space.regionType = RegionType.HarmonicMinor;
+  assertEquals(names(space.level(Level.Triadic).members()), ['C', 'E', 'A']);
 });
 
 Deno.test('a minor region uses the natural minor scale', () => {
@@ -58,9 +66,9 @@ Deno.test('a minor chord has a minor third', () => {
   const space = new TonalPitchSpace();
   space.chordType = ChordType.Minor;
   assertEquals(space.chordName, 'C minor');
-  assertEquals(names(space.level(Level.Triadic).members()), ['C', 'D#', 'G']);
-  assertEquals(names(space.level(Level.Fifth).members()), ['C', 'G']);
+  assertEquals(names(space.chordPitchClasses()), ['C', 'D#', 'G']);
   assertEquals(space.chordMidiNotes(), [60, 63, 67]);
+  assertEquals(names(space.level(Level.Triadic).members()), ['C', 'E', 'G']); // still C major's tonic triad
 });
 
 Deno.test('chord notes are in root position, from the chord\'s root note', () => {
@@ -89,6 +97,29 @@ Deno.test('each level steps the chord to its next note: C major chord, C major r
   assertEquals(step(Level.Root, -1), 48); // C3
 });
 
+Deno.test('the levels stay put as the chord moves: C major, the fifth level is C and G', () => {
+  const space = new TonalPitchSpace(); // C major region, C major chord on C4
+  space.stepChordIn(Level.Fifth, +1);
+  assertEquals([space.chordName, space.chordRootNote], ['G major', 67]);
+  assertEquals(names(space.level(Level.Fifth).members()), ['C', 'G']); // unchanged
+  space.stepChordIn(Level.Fifth, +1);
+  assertEquals([space.chordName, space.chordRootNote], ['C major', 72]); // up to C5
+  space.stepChordIn(Level.Fifth, -1);
+  space.stepChordIn(Level.Fifth, -1);
+  assertEquals(space.chordRootNote, 60); // down: G4, then C4
+});
+
+Deno.test('the triadic level walks through the region\'s tonic triad', () => {
+  const space = new TonalPitchSpace(); // C major: C E G
+  const roots: string[] = [];
+  for (let i = 0; i < 3; i++) {
+    space.stepChordIn(Level.Triadic, +1);
+    roots.push(space.chordRoot.name);
+  }
+  assertEquals(roots, ['E', 'G', 'C']);
+  assertEquals(space.chordType, ChordType.Major); // the chord keeps its own type
+});
+
 Deno.test('the diatonic step follows the region\'s scale, from a root outside it', () => {
   const space = new TonalPitchSpace(new PitchClass(9), new PitchClass(1)); // A region, C# chord
   space.regionType = RegionType.HarmonicMinor; // A B C D E F G#
@@ -97,9 +128,10 @@ Deno.test('the diatonic step follows the region\'s scale, from a root outside it
   space.stepChordIn(Level.Diatonic, -1);
   space.stepChordIn(Level.Diatonic, -1);
   assertEquals(space.chordRoot.name, 'B');
-  space.chordType = ChordType.Minor;
-  space.stepChordIn(Level.Triadic, +1); // B minor: B D F#
-  assertEquals(space.chordRoot.name, 'D');
+  space.stepChordIn(Level.Triadic, +1); // A minor's tonic triad: A C E
+  assertEquals(space.chordRoot.name, 'C');
+  space.stepChordIn(Level.Root, +1); // the region's root
+  assertEquals(space.chordRoot.name, 'A');
 });
 
 Deno.test('the chord wraps round at the ends of the keyboard, keeping its pitch class', () => {

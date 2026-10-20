@@ -94,7 +94,7 @@ export class PitchCirclesView {
     ctx.strokeStyle = Palette.chordSlice;
     ctx.lineWidth = Math.max(2.5, geo.gap * 0.06);
     ctx.lineJoin = 'round';
-    for (const pc of space.level(Level.Triadic).members()) {
+    for (const pc of space.chordPitchClasses()) {
       const { start, end } = geo.segmentOf(pc);
       ctx.beginPath();
       ctx.moveTo(x, y);

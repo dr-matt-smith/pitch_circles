@@ -3,7 +3,7 @@ import { PitchClass } from './PitchClass.ts';
 import { PitchClassSet } from './PitchClassSet.ts';
 import { CHORD_TYPES, ChordType, triadIntervals } from './ChordType.ts';
 import { nextIn } from './cycle.ts';
-import { REGION_TYPES, RegionType, scaleIntervals } from './RegionType.ts';
+import { REGION_TYPES, RegionType, scaleIntervals, tonicTriadIntervals } from './RegionType.ts';
 
 const CHROMATIC = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -31,7 +31,9 @@ type Listener = (space: TonalPitchSpace, change: Change) => void;
  * The state of the app: a region (key) and a chord within it, each with a root and a type
  * (e.g. a harmonic minor region, or a minor chord). The region's root is a pitch class; the chord's root is an
  * actual note (a MIDI note number), so the chord can move up and down octaves.
- * The chromatic and diatonic levels are built on the region, the triadic, fifth and root levels on the chord.
+ *
+ * The five levels (the rings) are all built on the region alone - its scale, its tonic triad, its root and fifth, and
+ * its root - so only changing the region changes them. The chord moves through them: see stepChordIn().
  *
  * Listeners are told whenever the region or chord changes, and which one.
  */
@@ -102,9 +104,10 @@ export class TonalPitchSpace {
   }
 
   /**
-   * Move the chord's root to the next note up (direction +1) or down (-1) in one level of the pitch space: the next
-   * semitone (chromatic), the next note of the region's scale (diatonic), the next note of the chord (triadic),
-   * the root's fifth or root (fifth), or the root an octave away (root).
+   * Move the chord's root to the next note up (direction +1) or down (-1) in one level of the region's pitch space:
+   * the next semitone (chromatic), the next note of the region's scale (diatonic), the next note of the region's
+   * tonic triad (triadic), the region's root or fifth (fifth), or the region's root (root, an octave apart).
+   * E.g. in C major the fifth level is C and G, so from a C chord it goes to G, and from G back to C.
    */
   stepChordIn(level: Level, direction: 1 | -1): void {
     const notes = this.level(level);
@@ -141,10 +144,14 @@ export class TonalPitchSpace {
     return `${this.chordRoot.name} ${this._chordType}`;
   }
 
-  /** The pitch classes in one level, for the current region and chord. */
+  /** The pitch classes in one level, for the current region (the chord doesn't change them). */
   level(level: Level): PitchClassSet {
-    const root = level <= Level.Diatonic ? this._regionRoot : this.chordRoot;
-    return PitchClassSet.fromIntervals(this.shape(level)).rotate(root.value);
+    return PitchClassSet.fromIntervals(this.shape(level)).rotate(this._regionRoot.value);
+  }
+
+  /** The chord's notes, as pitch classes (e.g. C, E, G). */
+  chordPitchClasses(): PitchClass[] {
+    return this.chordMidiNotes().map((note) => new PitchClass(note));
   }
 
   /** The MIDI note number of the region's root, in the octave below middle C (C3 to B3). */
@@ -169,7 +176,7 @@ export class TonalPitchSpace {
       case Level.Diatonic:
         return scaleIntervals(this._regionType);
       case Level.Triadic:
-        return triadIntervals(this._chordType);
+        return tonicTriadIntervals(this._regionType);
       case Level.Fifth:
         return FIFTH;
       case Level.Root:

@@ -7,9 +7,9 @@ import { arrowSize, ringArrowPlacements } from '../view/ringArrowLayout.ts';
 const STEPS: Record<Level, string> = {
   [Level.Chromatic]: 'the next semitone',
   [Level.Diatonic]: 'the next note of the region\'s scale',
-  [Level.Triadic]: 'the next note of the chord',
-  [Level.Fifth]: 'the next note of its open fifth (root or fifth)',
-  [Level.Root]: 'the next octave',
+  [Level.Triadic]: 'the next note of the region\'s tonic triad',
+  [Level.Fifth]: 'the region\'s next root or fifth',
+  [Level.Root]: 'the region\'s next root (octave)',
 };
 
 /**

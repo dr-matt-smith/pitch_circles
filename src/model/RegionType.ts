@@ -17,3 +17,8 @@ const SCALES: Record<RegionType, readonly number[]> = {
 export function scaleIntervals(type: RegionType): readonly number[] {
   return SCALES[type];
 }
+
+/** The region's tonic triad, above its root: major for a major region, minor for a minor or harmonic minor one. */
+export function tonicTriadIntervals(type: RegionType): readonly number[] {
+  return type === RegionType.Major ? [0, 4, 7] : [0, 3, 7];
+}
