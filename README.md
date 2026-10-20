@@ -12,8 +12,13 @@ and changing the chord plays its three notes in root position, both starting in 
 - **Without Celbridge** (e.g. on Linux, or with VS Code): see `README_deno_tooling.md`.
 - **Installing Deno** (Linux, macOS, Windows): see `README_deno_install.md`.
 
-Buttons: `< Chord` / `Chord >`, `< Region` / `Region >`, `< Display` / `Display >`.
-Keys: left/right = chord root, down/up = region root, D = labels (names, alphanumeric, integers).
+Buttons: `< Chord` / `Chord >`, `< Region` / `Region >`, `< Display` / `Display >`. Dropdowns: the region's type
+(major, minor, harmonic minor) and the chord's type (major, minor).
+Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type,
+D = labels (names, alphanumeric, integers).
+
+A minor region uses the natural minor scale (A minor has the same notes as C major), and a harmonic minor region
+raises its 7th (A harmonic minor has G#). A minor chord is a minor triad.
 
 ## The classes
 
@@ -24,12 +29,13 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/model/PitchClass.ts` | `PitchClass`: one of the 12 pitch classes, and its labels | `PitchClass2` |
 | `src/model/PitchClassSet.ts` | `PitchClassSet`, `Membership`: which pitch classes are in a level, and which is its root | `TrivaluePCList` |
 | `src/model/Level.ts` | `Level`: chromatic, diatonic, triadic, fifth, root | `PSPanel`'s constants |
-| `src/model/TonalPitchSpace.ts` | `TonalPitchSpace`: the region and chord roots, each level's pitch classes, and the chord's notes. Tells listeners when it changes | `PSPanel.levelPCsAsTrivalue()` |
+| `src/model/TonalPitchSpace.ts` | `TonalPitchSpace`: the region and chord (each a root and a type), each level's pitch classes, and the chord's notes. Tells listeners when it changes | `PSPanel.levelPCsAsTrivalue()` |
+| `src/model/RegionType.ts`, `src/model/ChordType.ts` | `RegionType` (major, minor, harmonic minor) and `ChordType` (major, minor), with their intervals | `PSPanel`'s unused `regionType`, `chordType` |
 | `src/model/DisplayMode.ts` | `DisplayMode`: how pitch classes are labelled | `PSPanel.displayMode` |
 | `src/view/CircleGeometry.ts` | `CircleGeometry`: ring radii, pitch class angles, points on circles | `CircleStuff`, `CirclePoint` |
 | `src/view/PitchCirclesView.ts` | `PitchCirclesView`: draws the rings, dots and labels on a canvas, sized to fit | `PSPanel.paintComponent()` |
 | `src/view/Palette.ts` | the colours | |
-| `src/ui/ButtonBar.ts`, `src/ui/InfoPanel.ts` | `ButtonBar`, `InfoPanel`: the buttons, and the line of text underneath | `PS31`'s `JButton`s and `JLabel`s |
+| `src/ui/ButtonBar.ts`, `src/ui/Dropdown.ts`, `src/ui/InfoPanel.ts` | `ButtonBar`, `Dropdown`, `InfoPanel`: the buttons, the type dropdowns, and the line of text underneath | `PS31`'s `JButton`s and `JLabel`s |
 | `src/audio/NotePlayer.ts` | `NotePlayer` (interface), `WebAudioNotePlayer`, `SilentNotePlayer` | `MIDIPlayer` |
 | `src/app/PitchCirclesApp.ts` | `PitchCirclesApp`: creates everything, and wires the buttons, keys and window resizing to the model | `PS31` |
 

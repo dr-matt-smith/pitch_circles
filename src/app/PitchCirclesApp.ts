@@ -1,7 +1,10 @@
 import { NotePlayer, SilentNotePlayer, WebAudioNotePlayer } from '../audio/NotePlayer.ts';
+import { CHORD_TYPES, ChordType } from '../model/ChordType.ts';
 import { DisplayMode, stepDisplayMode } from '../model/DisplayMode.ts';
+import { REGION_TYPES, RegionType } from '../model/RegionType.ts';
 import { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { ButtonBar } from '../ui/ButtonBar.ts';
+import { Dropdown } from '../ui/Dropdown.ts';
 import { InfoPanel } from '../ui/InfoPanel.ts';
 import { PitchCirclesView } from '../view/PitchCirclesView.ts';
 
@@ -17,7 +20,7 @@ export interface AppElements {
  * Whenever the model changes, the circles and info panel are redrawn. Changing the region plays its root note;
  * changing the chord plays the chord's three notes.
  *
- * Keys: left/right = chord root, down/up = region root, D = display mode.
+ * Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type, D = display mode.
  */
 export class PitchCirclesApp {
   private readonly space = new TonalPitchSpace();
@@ -25,6 +28,8 @@ export class PitchCirclesApp {
   private readonly circles: PitchCirclesView;
   private readonly info: InfoPanel;
   private readonly player: NotePlayer;
+  private readonly regionType: Dropdown<RegionType>;
+  private readonly chordType: Dropdown<ChordType>;
 
   constructor(elements: AppElements) {
     this.player = 'AudioContext' in globalThis ? new WebAudioNotePlayer() : new SilentNotePlayer();
@@ -39,6 +44,20 @@ export class PitchCirclesApp {
       { label: '< Display', title: 'Previous labels', run: () => this.stepDisplay(-1) },
       { label: 'Display >', title: 'Next labels (D)', run: () => this.stepDisplay(+1) },
     ]);
+    this.regionType = new Dropdown(
+      elements.buttons,
+      'Region',
+      'The region\'s scale (R)',
+      REGION_TYPES,
+      (type) => this.space.regionType = type,
+    );
+    this.chordType = new Dropdown(
+      elements.buttons,
+      'Chord',
+      'The chord\'s type (C)',
+      CHORD_TYPES,
+      (type) => this.space.chordType = type,
+    );
 
     this.space.onChange((space, change) => {
       this.refresh();
@@ -59,10 +78,12 @@ export class PitchCirclesApp {
       ArrowRight: () => this.space.stepChord(+1),
       ArrowDown: () => this.space.stepRegion(-1),
       ArrowUp: () => this.space.stepRegion(+1),
+      c: () => this.space.nextChordType(),
+      r: () => this.space.nextRegionType(),
       d: () => this.stepDisplay(+1),
-      D: () => this.stepDisplay(+1),
     };
-    const action = actions[event.key];
+    if (event.ctrlKey || event.metaKey || event.altKey) return; // leave browser shortcuts alone
+    const action = actions[event.key.length === 1 ? event.key.toLowerCase() : event.key];
     if (action) {
       event.preventDefault();
       action();
@@ -77,5 +98,7 @@ export class PitchCirclesApp {
   private refresh(): void {
     this.circles.redraw(this.space, this.displayMode);
     this.info.update(this.space, this.displayMode);
+    this.regionType.value = this.space.regionType;
+    this.chordType.value = this.space.chordType;
   }
 }

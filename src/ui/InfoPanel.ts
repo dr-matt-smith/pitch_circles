@@ -1,7 +1,7 @@
 import { DisplayMode, displayModeName } from '../model/DisplayMode.ts';
 import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 
-/** The line of text under the circles: the chord and region roots, and the display mode. */
+/** The line of text under the circles: the chord and region, and the display mode. */
 export class InfoPanel {
   private readonly chord: HTMLElement;
   private readonly region: HTMLElement;
@@ -14,8 +14,8 @@ export class InfoPanel {
   }
 
   update(space: TonalPitchSpace, mode: DisplayMode): void {
-    this.chord.textContent = `Chord root: ${space.chordRoot.name}`;
-    this.region.textContent = `Region root: ${space.regionRoot.name}`;
+    this.chord.textContent = `Chord: ${space.chordName}`;
+    this.region.textContent = `Region: ${space.regionName}`;
     this.mode.textContent = `Labels: ${displayModeName(mode)}`;
   }
 

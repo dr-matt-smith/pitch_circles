@@ -1,5 +1,7 @@
 import { assertEquals } from '@std/assert';
+import { ChordType } from '../src/model/ChordType.ts';
 import { Level } from '../src/model/Level.ts';
+import { RegionType } from '../src/model/RegionType.ts';
 import { PitchClass } from '../src/model/PitchClass.ts';
 import { TonalPitchSpace } from '../src/model/TonalPitchSpace.ts';
 
@@ -24,6 +26,43 @@ Deno.test('the region moves the diatonic level, the chord moves the triad levels
   assertEquals(space.level(Level.Root).root()?.name, 'D');
 });
 
+Deno.test('a minor region uses the natural minor scale', () => {
+  const space = new TonalPitchSpace(new PitchClass(9)); // A
+  space.regionType = RegionType.Minor;
+  assertEquals(space.regionName, 'A minor');
+  assertEquals(names(space.level(Level.Diatonic).members()), ['C', 'D', 'E', 'F', 'G', 'A', 'B']);
+  assertEquals(space.level(Level.Diatonic).root()?.name, 'A');
+});
+
+Deno.test('a harmonic minor region raises the 7th', () => {
+  const space = new TonalPitchSpace(new PitchClass(9)); // A
+  space.regionType = RegionType.HarmonicMinor;
+  assertEquals(space.regionName, 'A harmonic minor');
+  assertEquals(names(space.level(Level.Diatonic).members()), ['C', 'D', 'E', 'F', 'G#', 'A', 'B']);
+});
+
+Deno.test('region and chord types cycle round', () => {
+  const space = new TonalPitchSpace();
+  space.nextRegionType();
+  space.nextRegionType();
+  assertEquals(space.regionType, RegionType.HarmonicMinor);
+  space.nextRegionType();
+  assertEquals(space.regionType, RegionType.Major);
+  space.nextChordType();
+  assertEquals(space.chordType, ChordType.Minor);
+  space.nextChordType();
+  assertEquals(space.chordType, ChordType.Major);
+});
+
+Deno.test('a minor chord has a minor third', () => {
+  const space = new TonalPitchSpace();
+  space.chordType = ChordType.Minor;
+  assertEquals(space.chordName, 'C minor');
+  assertEquals(names(space.level(Level.Triadic).members()), ['C', 'D#', 'G']);
+  assertEquals(names(space.level(Level.Fifth).members()), ['C', 'G']);
+  assertEquals(space.chordMidiNotes(), [60, 63, 67]);
+});
+
 Deno.test('chord notes are in root position above middle C', () => {
   const space = new TonalPitchSpace();
   assertEquals(space.chordMidiNotes(), [60, 64, 67]);
@@ -44,6 +83,8 @@ Deno.test('listeners hear about every change, and which root changed', () => {
   space.onChange((_space, change) => changes.push(change));
   space.stepChord(1);
   space.stepRegion(-1);
-  assertEquals(changes, ['chord', 'region']);
+  space.nextChordType();
+  space.regionType = RegionType.HarmonicMinor;
+  assertEquals(changes, ['chord', 'region', 'chord', 'region']);
   assertEquals(space.regionRoot.name, 'B');
 });

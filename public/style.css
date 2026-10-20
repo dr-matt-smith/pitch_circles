@@ -32,6 +32,18 @@ body {
   cursor: pointer;
 }
 
+#buttons label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 16px Arial, sans-serif;
+}
+
+#buttons select {
+  font: 16px Arial, sans-serif;
+  padding: 6px;
+}
+
 #buttons button:hover {
   background: #d0d0e0;
 }
