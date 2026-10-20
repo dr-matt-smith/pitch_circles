@@ -1,4 +1,5 @@
-import { NotePlayer, SilentNotePlayer, WebAudioNotePlayer } from '../audio/NotePlayer.ts';
+import { INSTRUMENTS, instrumentNamed } from '../audio/instruments.ts';
+import { NotePlayer, SilentNotePlayer, SynthNotePlayer } from '../audio/NotePlayer.ts';
 import { CHORD_TYPES, ChordType } from '../model/ChordType.ts';
 import { DisplayMode, stepDisplayMode } from '../model/DisplayMode.ts';
 import { REGION_TYPES, RegionType } from '../model/RegionType.ts';
@@ -32,7 +33,7 @@ export class PitchCirclesApp {
   private readonly chordType: Dropdown<ChordType>;
 
   constructor(elements: AppElements) {
-    this.player = 'AudioContext' in globalThis ? new WebAudioNotePlayer() : new SilentNotePlayer();
+    this.player = 'AudioContext' in globalThis ? new SynthNotePlayer() : new SilentNotePlayer();
     this.circles = new PitchCirclesView(elements.canvas);
     this.info = new InfoPanel(elements.info);
 
@@ -58,6 +59,7 @@ export class PitchCirclesApp {
       CHORD_TYPES,
       (type) => this.space.chordType = type,
     );
+    this.createInstrumentDropdown(elements.buttons);
 
     this.space.onChange((space, change) => {
       this.refresh();
@@ -72,6 +74,21 @@ export class PitchCirclesApp {
     this.refresh();
   }
 
+  private createInstrumentDropdown(container: HTMLElement): void {
+    const player = this.player;
+    if (!(player instanceof SynthNotePlayer)) return;
+    new Dropdown(
+      container,
+      'Instrument',
+      'The sound the notes are played with',
+      INSTRUMENTS.map((sound) => sound.name),
+      (name) => {
+        player.instrument = instrumentNamed(name) ?? player.instrument;
+        player.play(this.space.chordMidiNotes()); // let the new sound be heard
+      },
+    );
+  }
+
   private onKey(event: KeyboardEvent): void {
     const actions: Record<string, () => void> = {
       ArrowLeft: () => this.space.stepChord(-1),
@@ -83,6 +100,7 @@ export class PitchCirclesApp {
       d: () => this.stepDisplay(+1),
     };
     if (event.ctrlKey || event.metaKey || event.altKey) return; // leave browser shortcuts alone
+    if (event.target instanceof HTMLSelectElement) return; // arrow keys move through a dropdown's options
     const action = actions[event.key.length === 1 ? event.key.toLowerCase() : event.key];
     if (action) {
       event.preventDefault();

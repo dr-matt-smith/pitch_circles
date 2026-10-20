@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Glass Bell",
+  "category": "keys",
+  "instrument": {
+    "wave": "triangle",
+    "adsr": { "a": 0.002, "d": 0.35, "s": 0.0, "r": 0.5 },
+    "filter": { "type": "lowpass", "freq": 6000 },
+    "volume": 0.7
+  }
+}

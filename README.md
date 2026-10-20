@@ -13,12 +13,20 @@ and changing the chord plays its three notes in root position, both starting in 
 - **Installing Deno** (Linux, macOS, Windows): see `README_deno_install.md`.
 
 Buttons: `< Chord` / `Chord >`, `< Region` / `Region >`, `< Display` / `Display >`. Dropdowns: the region's type
-(major, minor, harmonic minor) and the chord's type (major, minor).
+(major, minor, harmonic minor), the chord's type (major, minor), and the instrument.
 Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type,
 D = labels (names, alphanumeric, integers).
 
 A minor region uses the natural minor scale (A minor has the same notes as C major), and a harmonic minor region
 raises its 7th (A harmonic minor has G#). A minor chord is a minor triad.
+
+## Sound
+
+Notes are synthesised in the browser with Web Audio (no sound files), using `.synthsound` instruments: the same
+format as Sound Gen's instrument editor and the Chip Sequencer, so they sound the same here as there. Pick one from
+the Instrument dropdown. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
+and add an import for it to `src/audio/instruments.ts`. The instruments are built into `app.js`, so
+`dist/index.html` still works opened straight from disk.
 
 ## The classes
 
@@ -36,7 +44,9 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/view/PitchCirclesView.ts` | `PitchCirclesView`: draws the rings, dots and labels on a canvas, sized to fit | `PSPanel.paintComponent()` |
 | `src/view/Palette.ts` | the colours | |
 | `src/ui/ButtonBar.ts`, `src/ui/Dropdown.ts`, `src/ui/InfoPanel.ts` | `ButtonBar`, `Dropdown`, `InfoPanel`: the buttons, the type dropdowns, and the line of text underneath | `PS31`'s `JButton`s and `JLabel`s |
-| `src/audio/NotePlayer.ts` | `NotePlayer` (interface), `WebAudioNotePlayer`, `SilentNotePlayer` | `MIDIPlayer` |
+| `src/audio/NotePlayer.ts` | `NotePlayer` (interface), `SynthNotePlayer` (plays a `.synthsound` instrument), `SilentNotePlayer` | `MIDIPlayer` |
+| `src/audio/voice.ts` | builds one note's Web Audio graph from a `.synthsound` instrument: a TypeScript port of `voice.js` from the Sound Gen and Chip Sequencer Celbridge packages | |
+| `src/audio/instruments.ts`, `src/audio/instruments/` | the instruments to choose from: `.synthsound` presets from the Soundbanks package | |
 | `src/app/PitchCirclesApp.ts` | `PitchCirclesApp`: creates everything, and wires the buttons, keys and window resizing to the model | `PS31` |
 
 MIT licensed: see `LICENSE`.

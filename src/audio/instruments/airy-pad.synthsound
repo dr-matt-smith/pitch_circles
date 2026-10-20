@@ -1,0 +1,33 @@
+{
+  "format": "synthsound",
+  "version": 2,
+  "name": "Airy Pad",
+  "category": "other",
+  "instrument": {
+    "wave": "triangle",
+    "pulseWidth": 0.5,
+    "detune": 0,
+    "adsr": {
+      "a": 0.665,
+      "d": 0.625,
+      "s": 0.51,
+      "r": 0.8
+    },
+    "filter": {
+      "type": "lowpass",
+      "freq": 1500,
+      "q": 1
+    },
+    "filterEnv": {
+      "amount": 0,
+      "a": 0.005,
+      "d": 0.2
+    },
+    "vibrato": {
+      "depth": 0,
+      "rate": 5,
+      "delay": 0
+    },
+    "volume": 0.65
+  }
+}

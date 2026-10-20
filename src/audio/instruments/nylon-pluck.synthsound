@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Nylon Pluck",
+  "category": "pluck",
+  "instrument": {
+    "wave": "sawtooth",
+    "adsr": { "a": 0.005, "d": 0.18, "s": 0.1, "r": 0.12 },
+    "filter": { "type": "lowpass", "freq": 3000 },
+    "volume": 0.8
+  }
+}

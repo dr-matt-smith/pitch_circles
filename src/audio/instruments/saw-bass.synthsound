@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Saw Bass",
+  "category": "bass",
+  "instrument": {
+    "wave": "sawtooth",
+    "adsr": { "a": 0.01, "d": 0.15, "s": 0.7, "r": 0.12 },
+    "filter": { "type": "lowpass", "freq": 900 },
+    "volume": 0.85
+  }
+}

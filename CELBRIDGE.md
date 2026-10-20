@@ -23,6 +23,7 @@ running, press **Ctrl+C** first to stop it.
 | Folder | What goes in it |
 |---|---|
 | `src/` | the app's TypeScript code. `src/main.ts` is where it starts (see `README.md` for the classes) |
+| `src/audio/instruments/` | the `.synthsound` instruments (open one to edit it in Sound Gen). List new ones in `src/audio/instruments.ts` |
 | `public/` | `index.html`, `style.css` and `favicon.svg` |
 | `tests/` | tests, in files ending `.test.ts` |
 

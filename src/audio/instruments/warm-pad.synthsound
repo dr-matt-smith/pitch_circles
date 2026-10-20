@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Warm Pad",
+  "category": "pad",
+  "instrument": {
+    "wave": "triangle",
+    "adsr": { "a": 0.25, "d": 0.3, "s": 0.8, "r": 0.6 },
+    "filter": { "type": "lowpass", "freq": 1800 },
+    "volume": 0.7
+  }
+}

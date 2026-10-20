@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Bright Chip Lead",
+  "category": "lead",
+  "instrument": {
+    "wave": "square",
+    "adsr": { "a": 0.005, "d": 0.06, "s": 0.5, "r": 0.08 },
+    "filter": { "type": "lowpass", "freq": 4200 },
+    "volume": 0.85
+  }
+}

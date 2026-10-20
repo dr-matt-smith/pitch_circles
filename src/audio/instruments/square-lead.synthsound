@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Square Lead",
+  "category": "lead",
+  "instrument": {
+    "wave": "square",
+    "adsr": { "a": 0.01, "d": 0.1, "s": 0.6, "r": 0.2 },
+    "filter": { "type": "lowpass", "freq": 2600 },
+    "volume": 0.8
+  }
+}

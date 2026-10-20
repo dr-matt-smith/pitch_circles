@@ -1,3 +1,6 @@
+import { DEFAULT_INSTRUMENT } from './instruments.ts';
+import { buildVoice, type SynthSound } from './voice.ts';
+
 /** Something that can sound notes: one note, or several at once (a chord). */
 export interface NotePlayer {
   play(midiNotes: readonly number[]): void;
@@ -9,39 +12,46 @@ export function midiToFrequency(note: number): number {
 }
 
 /**
- * Plays notes with the Web Audio API: one soft triangle-wave voice per note, fading out.
- * (Replaces the Java version's javax.sound.midi synthesizer.)
+ * Plays notes on a .synthsound instrument (see voice.ts), with the Web Audio API.
  *
  * Browsers only allow sound after the user has clicked or pressed a key, so the AudioContext is made the first
  * time anything is played (which is always in response to a click or key press).
  */
-export class WebAudioNotePlayer implements NotePlayer {
+export class SynthNotePlayer implements NotePlayer {
+  instrument: SynthSound = DEFAULT_INSTRUMENT;
   private context?: AudioContext;
+  private output?: AudioNode;
 
   constructor(
-    private readonly duration = 1.2,
-    private readonly volume = 0.15,
+    private readonly noteSeconds = 0.8,
+    private readonly volume = 0.6,
   ) {}
 
   play(midiNotes: readonly number[]): void {
     const ctx = this.context ??= new AudioContext();
     if (ctx.state === 'suspended') void ctx.resume();
-    const now = ctx.currentTime;
+    const output = this.output ??= this.createOutput(ctx);
 
+    // Quieter per note in a chord, so a chord isn't three times as loud as a single note
+    const velocity = 1 / Math.sqrt(midiNotes.length);
     for (const note of midiNotes) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = midiToFrequency(note);
-
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(this.volume, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + this.duration);
-
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + this.duration);
+      buildVoice(ctx, output, {
+        instrument: this.instrument.instrument,
+        frequency: midiToFrequency(note),
+        startTime: ctx.currentTime,
+        noteSeconds: this.noteSeconds,
+        velocity,
+      });
     }
+  }
+
+  // Master volume, then a compressor so overlapping notes (e.g. clicking quickly) never clip
+  private createOutput(ctx: AudioContext): AudioNode {
+    const gain = ctx.createGain();
+    gain.gain.value = this.volume;
+    const compressor = ctx.createDynamicsCompressor();
+    gain.connect(compressor).connect(ctx.destination);
+    return gain;
   }
 }
 

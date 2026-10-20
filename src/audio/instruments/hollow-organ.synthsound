@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Hollow Organ",
+  "category": "keys",
+  "instrument": {
+    "wave": "square",
+    "adsr": { "a": 0.02, "d": 0.05, "s": 0.9, "r": 0.12 },
+    "filter": { "type": "bandpass", "freq": 1200 },
+    "volume": 0.7
+  }
+}

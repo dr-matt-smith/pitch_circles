@@ -1,0 +1,12 @@
+{
+  "format": "synthsound",
+  "version": 1,
+  "name": "Sub Bass",
+  "category": "bass",
+  "instrument": {
+    "wave": "triangle",
+    "adsr": { "a": 0.01, "d": 0.2, "s": 0.8, "r": 0.15 },
+    "filter": { "type": "lowpass", "freq": 420 },
+    "volume": 0.9
+  }
+}
