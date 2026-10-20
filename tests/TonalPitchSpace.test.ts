@@ -31,12 +31,19 @@ Deno.test('chord notes are in root position above middle C', () => {
   assertEquals(space.chordMidiNotes(), [71, 75, 78]);
 });
 
-Deno.test('listeners hear about every change', () => {
+Deno.test('the region root note is in the octave of middle C', () => {
   const space = new TonalPitchSpace();
-  let changes = 0;
-  space.onChange(() => changes++);
+  assertEquals(space.regionRootMidiNote(), 60);
+  space.stepRegion(7); // G
+  assertEquals(space.regionRootMidiNote(), 67);
+});
+
+Deno.test('listeners hear about every change, and which root changed', () => {
+  const space = new TonalPitchSpace();
+  const changes: string[] = [];
+  space.onChange((_space, change) => changes.push(change));
   space.stepChord(1);
   space.stepRegion(-1);
-  assertEquals(changes, 2);
+  assertEquals(changes, ['chord', 'region']);
   assertEquals(space.regionRoot.name, 'B');
 });

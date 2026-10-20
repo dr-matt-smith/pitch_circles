@@ -1,5 +1,5 @@
-/** Something that can sound a chord. */
-export interface ChordPlayer {
+/** Something that can sound notes: one note, or several at once (a chord). */
+export interface NotePlayer {
   play(midiNotes: readonly number[]): void;
 }
 
@@ -9,13 +9,13 @@ export function midiToFrequency(note: number): number {
 }
 
 /**
- * Plays chords with the Web Audio API: one soft triangle-wave voice per note, fading out.
+ * Plays notes with the Web Audio API: one soft triangle-wave voice per note, fading out.
  * (Replaces the Java version's javax.sound.midi synthesizer.)
  *
  * Browsers only allow sound after the user has clicked or pressed a key, so the AudioContext is made the first
- * time a chord is played (which is always in response to a click or key press).
+ * time anything is played (which is always in response to a click or key press).
  */
-export class WebAudioChordPlayer implements ChordPlayer {
+export class WebAudioNotePlayer implements NotePlayer {
   private context?: AudioContext;
 
   constructor(
@@ -46,6 +46,6 @@ export class WebAudioChordPlayer implements ChordPlayer {
 }
 
 /** Used when the browser has no Web Audio. */
-export class SilentChordPlayer implements ChordPlayer {
+export class SilentNotePlayer implements NotePlayer {
   play(_midiNotes: readonly number[]): void {}
 }

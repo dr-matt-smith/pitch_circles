@@ -13,13 +13,16 @@ const SHAPES: Record<Level, readonly number[]> = {
 
 export const MIDDLE_C = 60;
 
-type Listener = (space: TonalPitchSpace) => void;
+/** Which root changed. */
+export type Change = 'region' | 'chord';
+
+type Listener = (space: TonalPitchSpace, change: Change) => void;
 
 /**
  * The state of the app: a region (key) and a chord within it. The chromatic and diatonic levels are built on the
  * region's root, the triadic, fifth and root levels on the chord's root.
  *
- * Listeners are told whenever either root changes.
+ * Listeners are told whenever either root changes, and which one.
  */
 export class TonalPitchSpace {
   private _regionRoot: PitchClass;
@@ -37,7 +40,7 @@ export class TonalPitchSpace {
 
   set regionRoot(pc: PitchClass) {
     this._regionRoot = pc;
-    this.changed();
+    this.changed('region');
   }
 
   get chordRoot(): PitchClass {
@@ -46,7 +49,7 @@ export class TonalPitchSpace {
 
   set chordRoot(pc: PitchClass) {
     this._chordRoot = pc;
-    this.changed();
+    this.changed('chord');
   }
 
   /** Move the region root round the circle (+1 = clockwise, a semitone up). */
@@ -65,6 +68,11 @@ export class TonalPitchSpace {
     return PitchClassSet.fromIntervals(SHAPES[level]).rotate(root.value);
   }
 
+  /** The MIDI note number of the region's root, in the octave of middle C. */
+  regionRootMidiNote(base = MIDDLE_C): number {
+    return base + this._regionRoot.value;
+  }
+
   /** MIDI note numbers for the chord in root position, starting from the octave of middle C. */
   chordMidiNotes(base = MIDDLE_C): number[] {
     const root = this._chordRoot.value;
@@ -75,7 +83,7 @@ export class TonalPitchSpace {
     this.listeners.push(listener);
   }
 
-  private changed(): void {
-    for (const listener of this.listeners) listener(this);
+  private changed(change: Change): void {
+    for (const listener of this.listeners) listener(this, change);
   }
 }

@@ -1,6 +1,6 @@
 import { assertAlmostEquals, assertEquals } from '@std/assert';
 import { PitchClass } from '../src/model/PitchClass.ts';
-import { midiToFrequency } from '../src/audio/ChordPlayer.ts';
+import { midiToFrequency } from '../src/audio/NotePlayer.ts';
 import { CircleGeometry } from '../src/view/CircleGeometry.ts';
 
 const geo = new CircleGeometry({ x: 100, y: 100 }, 100, 30); // gap = 10

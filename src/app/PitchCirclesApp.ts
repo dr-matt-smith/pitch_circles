@@ -1,4 +1,4 @@
-import { ChordPlayer, SilentChordPlayer, WebAudioChordPlayer } from '../audio/ChordPlayer.ts';
+import { NotePlayer, SilentNotePlayer, WebAudioNotePlayer } from '../audio/NotePlayer.ts';
 import { DisplayMode, stepDisplayMode } from '../model/DisplayMode.ts';
 import { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { ButtonBar } from '../ui/ButtonBar.ts';
@@ -14,7 +14,8 @@ export interface AppElements {
 
 /**
  * The app. It owns the model (TonalPitchSpace), and wires the buttons and keys to it.
- * Whenever the model changes, the circles and info panel are redrawn and the chord is played.
+ * Whenever the model changes, the circles and info panel are redrawn. Changing the region plays its root note;
+ * changing the chord plays the chord's three notes.
  *
  * Keys: left/right = chord root, down/up = region root, D = display mode.
  */
@@ -23,10 +24,10 @@ export class PitchCirclesApp {
   private displayMode = DisplayMode.Names;
   private readonly circles: PitchCirclesView;
   private readonly info: InfoPanel;
-  private readonly player: ChordPlayer;
+  private readonly player: NotePlayer;
 
   constructor(elements: AppElements) {
-    this.player = 'AudioContext' in globalThis ? new WebAudioChordPlayer() : new SilentChordPlayer();
+    this.player = 'AudioContext' in globalThis ? new WebAudioNotePlayer() : new SilentNotePlayer();
     this.circles = new PitchCirclesView(elements.canvas);
     this.info = new InfoPanel(elements.info);
 
@@ -39,9 +40,9 @@ export class PitchCirclesApp {
       { label: 'Display >', title: 'Next labels (D)', run: () => this.stepDisplay(+1) },
     ]);
 
-    this.space.onChange(() => {
+    this.space.onChange((space, change) => {
       this.refresh();
-      this.player.play(this.space.chordMidiNotes());
+      this.player.play(change === 'region' ? [space.regionRootMidiNote()] : space.chordMidiNotes());
     });
     document.addEventListener('keydown', (event) => this.onKey(event));
     new ResizeObserver(() => {
