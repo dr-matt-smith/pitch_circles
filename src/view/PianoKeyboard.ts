@@ -1,5 +1,6 @@
 import { DisplayMode } from '../model/DisplayMode.ts';
 import { PitchClass } from '../model/PitchClass.ts';
+import type { PitchClassSet } from '../model/PitchClassSet.ts';
 import { pianoKeys, whiteKeyCount } from './pianoLayout.ts';
 
 /** Why a key is lit: it is the region's root, a note of the chord, or a key that was clicked. Used as a CSS class. */
@@ -13,7 +14,8 @@ const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
  * A piano keyboard drawn with HTML elements, which lights up the keys being played.
  * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
  *
- * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()).
+ * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()), and the keys in
+ * the region's scale are outlined in the region colour (see setScale()).
  *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
@@ -59,6 +61,13 @@ export class PianoKeyboard {
   setLabels(mode: DisplayMode): void {
     for (const [note, label] of this.labels) {
       label.textContent = new PitchClass(note).label(mode);
+    }
+  }
+
+  /** Outline the keys whose pitch class is in `scale` (e.g. the diatonic level, for the current region). */
+  setScale(scale: PitchClassSet): void {
+    for (const [note, key] of this.keys) {
+      key.classList.toggle('in-scale', scale.contains(new PitchClass(note)));
     }
   }
 

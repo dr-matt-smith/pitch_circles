@@ -26,7 +26,8 @@ Notes are synthesised in the browser with Web Audio (no sound files), using `.sy
 format as Sound Gen's instrument editor and the Chip Sequencer, so they sound the same here as there. Pick one from
 the Instrument dropdown. The keyboard along the top lights up each note while it sounds: the region's root in
 magenta, the chord's notes in red. Click its keys (or drag across them) to play single notes, lit in blue. The keys are
-labelled to match the Display setting. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
+labelled to match the Display setting, and the keys in the region's scale are outlined in magenta, as in the
+diatonic ring. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
 and add an import for it to `src/audio/instruments.ts`. The instruments are built into `app.js`, so
 `dist/index.html` still works opened straight from disk.
 

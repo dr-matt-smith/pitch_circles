@@ -2,6 +2,7 @@ import { INSTRUMENTS, instrumentNamed } from '../audio/instruments.ts';
 import { NotePlayer, SilentNotePlayer, SynthNotePlayer } from '../audio/NotePlayer.ts';
 import { CHORD_TYPES, ChordType } from '../model/ChordType.ts';
 import { DisplayMode, stepDisplayMode } from '../model/DisplayMode.ts';
+import { Level } from '../model/Level.ts';
 import { REGION_TYPES, RegionType } from '../model/RegionType.ts';
 import { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { ButtonBar } from '../ui/ButtonBar.ts';
@@ -129,6 +130,7 @@ export class PitchCirclesApp {
     this.circles.redraw(this.space, this.displayMode);
     this.info.update(this.space, this.displayMode);
     this.piano.setLabels(this.displayMode);
+    this.piano.setScale(this.space.level(Level.Diatonic));
     this.regionType.value = this.space.regionType;
     this.chordType.value = this.space.chordType;
   }

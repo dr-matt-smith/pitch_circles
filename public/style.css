@@ -32,7 +32,7 @@ body {
   box-sizing: border-box;
   border: 1px solid #222222;
   border-radius: 0 0 4px 4px;
-  transition: background-color 0.25s, box-shadow 0.25s; /* fade out when a note ends */
+  transition: background-color 0.25s; /* fade out when a note ends */
   /* the label, along the bottom of the key */
   display: flex;
   align-items: flex-end;
@@ -41,10 +41,20 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Lit keys keep their dark border, with a white ring inside it, so neighbouring lit keys stay distinct */
+/* Keys in the region's scale: outlined in the region colour, like the diatonic ring of the circles */
+#piano .in-scale {
+  box-shadow: inset 0 0 0 3px #ff00ff;
+}
+
+/* Lit keys keep their dark border, with a white ring inside it, so neighbouring lit keys stay distinct.
+   A lit key in the scale keeps its outline too, with the white ring inside that. */
 #piano .lit {
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
   transition: none; /* light up straight away */
+}
+
+#piano .lit.in-scale {
+  box-shadow: inset 0 0 0 3px #ff00ff, inset 0 0 0 5px rgba(255, 255, 255, 0.85);
 }
 
 #piano .white {
