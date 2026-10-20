@@ -64,6 +64,13 @@ body {
   color: #ffffff;
 }
 
+/* The chord's notes: a band across the bottom of the key, behind the label, in the triadic ring's colour. The rest
+   of the key keeps its scale colour, so a chord note outside the scale still shows as outside it */
+#piano .chord-tone {
+  background-image: linear-gradient(to top, #ffafaf 40%, transparent 40%);
+  color: #0000ff;
+}
+
 /* Lit keys: the region's root in a darker region colour (so it shows on the scale's colour), the chord's notes in
    the chord colour (as in the info line), and a clicked key in the circles' line colour */
 #piano .lit {

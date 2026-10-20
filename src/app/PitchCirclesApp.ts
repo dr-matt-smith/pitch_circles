@@ -131,6 +131,7 @@ export class PitchCirclesApp {
     this.info.update(this.space, this.displayMode);
     this.piano.setLabels(this.displayMode);
     this.piano.setScale(this.space.level(Level.Diatonic));
+    this.piano.setChord(this.space.level(Level.Triadic));
     this.regionType.value = this.space.regionType;
     this.chordType.value = this.space.chordType;
   }

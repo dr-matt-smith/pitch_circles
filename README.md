@@ -25,7 +25,8 @@ raises its 7th (A harmonic minor has G#). A minor chord is a minor triad.
 Notes are synthesised in the browser with Web Audio (no sound files), using `.synthsound` instruments: the same
 format as Sound Gen's instrument editor and the Chip Sequencer, so they sound the same here as there. Pick one from
 the Instrument dropdown. The keyboard along the top shows the region's scale as the diatonic ring does: its keys
-are coloured magenta, and the tonic has the same yellow and red dots. It lights up each note while it sounds: the
+are coloured magenta, and the tonic has the same yellow and red dots. The chord's notes have a pink band, as in the
+triadic ring. It lights up each note while it sounds: the
 region's root in dark purple, the chord's notes in red. Click its keys (or drag across them) to play single notes,
 lit in blue. The keys are labelled to match the Display setting. To add your own, design it in Sound Gen, save the `.synthsound` in `src/audio/instruments/`,
 and add an import for it to `src/audio/instruments.ts`. The instruments are built into `app.js`, so

@@ -16,7 +16,7 @@ const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
  *
  * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()), and the keys in
  * the region's scale are coloured in the region colour, the tonic marked with dots as in the circles (see
- * setScale()).
+ * setScale()), and the chord's notes have a band in the chord colour (see setChord()).
  *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
@@ -79,6 +79,13 @@ export class PianoKeyboard {
       const pc = new PitchClass(note);
       key.classList.toggle('in-scale', scale.contains(pc));
       key.classList.toggle('tonic', scale.isRoot(pc));
+    }
+  }
+
+  /** Mark the keys whose pitch class is in `chord` (e.g. the triadic level, for the current chord). */
+  setChord(chord: PitchClassSet): void {
+    for (const [note, key] of this.keys) {
+      key.classList.toggle('chord-tone', chord.contains(new PitchClass(note)));
     }
   }
 
