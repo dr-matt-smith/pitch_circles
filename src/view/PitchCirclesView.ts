@@ -4,6 +4,7 @@ import { PitchClass } from '../model/PitchClass.ts';
 import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import { CircleGeometry } from './CircleGeometry.ts';
 import { levelColour, Palette } from './Palette.ts';
+import { ringOf } from './ringOrder.ts';
 
 // The levels whose root is marked with a dot: the region's tonic (red), and the chord's root (yellow).
 const ROOT_DOTS: readonly { level: Level; colour: string }[] = [
@@ -15,10 +16,13 @@ const ROOT_DOTS: readonly { level: Level; colour: string }[] = [
  * Draws tonal pitch space on a canvas as five concentric rings of 12 segments, one ring per level.
  * A segment is coloured when its pitch class is in that level, and grey when not.
  *
+ * Normally the chromatic level is the innermost ring; with `reversed` it is the outermost (see ringOf()).
+ *
  * The canvas is sized to fit its parent element, and redrawn whenever that changes size.
  */
 export class PitchCirclesView {
   private readonly ctx: CanvasRenderingContext2D;
+  reversed = false; // redraw() after changing it
   private geometry: CircleGeometry;
 
   constructor(private readonly canvas: HTMLCanvasElement) {
@@ -50,6 +54,11 @@ export class PitchCirclesView {
     return this.geometry;
   }
 
+  /** Which ring a level is drawn on, counting out from the innermost (0). */
+  ringOf(level: Level): number {
+    return ringOf(level, this.reversed);
+  }
+
   /** Where everything is drawn, for the current size. */
   get layout(): CircleGeometry {
     return this.geometry;
@@ -67,8 +76,9 @@ export class PitchCirclesView {
   // Fill the rings from the outside in: each ring's disc is drawn over the inner part of the ring before it.
   private drawRings(space: TonalPitchSpace): void {
     const geo = this.geometry;
-    for (const level of [...LEVELS].reverse()) {
-      const radius = geo.ringOuter(level);
+    const outsideIn = [...LEVELS].sort((a, b) => this.ringOf(b) - this.ringOf(a));
+    for (const level of outsideIn) {
+      const radius = geo.ringOuter(this.ringOf(level));
       this.disc(radius, Palette.off);
 
       for (const pc of space.level(level).members()) {
@@ -85,7 +95,7 @@ export class PitchCirclesView {
       const root = space.level(level).root();
       if (!root) continue;
       // in the segment, just outside the label
-      this.dot(geo.pointAt(geo.angleOf(root), geo.ringInner(level) + geo.gap * 0.8), dotRadius, colour);
+      this.dot(geo.pointAt(geo.angleOf(root), geo.ringInner(this.ringOf(level)) + geo.gap * 0.8), dotRadius, colour);
     }
   }
 
@@ -121,7 +131,7 @@ export class PitchCirclesView {
 
     for (const level of LEVELS) {
       for (const pc of PitchClass.all()) {
-        const p = geo.pointAt(geo.angleOf(pc), geo.ringMiddle(level));
+        const p = geo.pointAt(geo.angleOf(pc), geo.ringMiddle(this.ringOf(level)));
         ctx.fillText(pc.label(mode), p.x, p.y);
       }
     }

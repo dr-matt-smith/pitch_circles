@@ -1,4 +1,4 @@
-/** An on/off switch with a label (a checkbox, styled as a switch). */
+/** An on/off switch with a label (a checkbox, styled as a switch). `onChange` is called when it is clicked. */
 export class Toggle {
   private readonly input: HTMLInputElement;
 
@@ -16,5 +16,10 @@ export class Toggle {
 
   get on(): boolean {
     return this.input.checked;
+  }
+
+  /** Switch it on or off from code (e.g. after a key press), which doesn't call `onChange`. */
+  set on(on: boolean) {
+    this.input.checked = on;
   }
 }

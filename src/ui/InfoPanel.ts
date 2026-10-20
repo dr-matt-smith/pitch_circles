@@ -1,12 +1,17 @@
 import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 
-/** The line of text under the circles: the region and the chord, in full (e.g. "A harmonic minor"). */
+/**
+ * The line along the bottom: the region and the chord in full (e.g. "A harmonic minor"), with room for controls in
+ * between (`middle`).
+ */
 export class InfoPanel {
   private readonly region: HTMLElement;
+  readonly middle: HTMLElement;
   private readonly chord: HTMLElement;
 
   constructor(container: HTMLElement) {
     this.region = InfoPanel.addSpan(container, 'region');
+    this.middle = InfoPanel.addSpan(container, 'middle');
     this.chord = InfoPanel.addSpan(container, 'chord');
   }
 

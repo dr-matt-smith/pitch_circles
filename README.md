@@ -31,9 +31,10 @@ Every control is on show - buttons, radio buttons, switches and sliders - so you
   **Tempo** (40 to 200 beats per minute). Switching either on starts the beat; switching both off stops it. While a
   part repeats, changing it doesn't play it straight away: the next beat plays the new one.
 - **Volume**, **Instrument**, and **Display** (the labels: note letters, alphanumeric 0 … 9, a, b, or integers 0 … 11).
+- **Reverse circles** (bottom middle) turns the rings round: chromatic outermost, the octave ring innermost.
 
 Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type, D = next display,
-space = play the chord once.
+V = reverse the circles, space = play the chord once.
 
 ## The keyboard
 
@@ -66,7 +67,7 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/model/RegionType.ts`, `src/model/ChordType.ts` | `RegionType` (major, minor, harmonic minor) and `ChordType` (major, minor), with their intervals | `PSPanel`'s unused `regionType`, `chordType` |
 | `src/model/DisplayMode.ts` | `DisplayMode`: how pitch classes are labelled | `PSPanel.displayMode` |
 | `src/view/CircleGeometry.ts` | `CircleGeometry`: ring radii, pitch class angles, points on circles | `CircleStuff`, `CirclePoint` |
-| `src/view/PitchCirclesView.ts` | `PitchCirclesView`: draws the rings, dots and labels on a canvas, sized to fit | `PSPanel.paintComponent()` |
+| `src/view/PitchCirclesView.ts`, `src/view/ringOrder.ts` | `PitchCirclesView`: draws the rings, dots and labels on a canvas, sized to fit; `ringOf()` says which ring each level is on (normal or reversed) | `PSPanel.paintComponent()` |
 | `src/view/PianoKeyboard.ts`, `src/view/pianoLayout.ts` | `PianoKeyboard`: the keyboard along the top (C3 to B5), lighting the keys as they play, and playing the keys you click; `pianoKeys()` works out where each key goes | |
 | `src/view/Palette.ts` | the colours | |
 | `src/ui/LevelControls.ts` | `LevelControls`: the region's or chord's `<` `>` buttons, root name and type radio buttons | `PS31`'s `JButton`s |

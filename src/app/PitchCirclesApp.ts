@@ -41,7 +41,7 @@ const capitalise = (text: string) => text[0].toUpperCase() + text.slice(1);
  * The repeat switches play the chord and/or the region's root on every beat, at the Tempo slider's speed.
  *
  * Keys: left/right = chord root, down/up = region root, R = next region type, C = next chord type,
- * D = next display mode, space = play the chord once.
+ * D = next display mode, V = reverse the circles, space = play the chord once.
  */
 export class PitchCirclesApp {
   private readonly space = new TonalPitchSpace();
@@ -57,6 +57,7 @@ export class PitchCirclesApp {
   private readonly display: RadioGroup<DisplayMode>;
   private readonly chordRepeat: Toggle;
   private readonly regionRepeat: Toggle;
+  private readonly reverse: Toggle;
 
   constructor(elements: AppElements) {
     this.player = 'AudioContext' in globalThis ? new SynthNotePlayer() : new SilentNotePlayer();
@@ -128,6 +129,12 @@ export class PitchCirclesApp {
     );
 
     this.info = new InfoPanel(elements.info);
+    this.reverse = new Toggle(
+      this.info.middle,
+      'Reverse circles',
+      'Put the chromatic ring outermost and the octave ring innermost (V)',
+      (on) => this.setReversed(on),
+    );
 
     this.space.onChange((_space, change) => {
       this.refresh();
@@ -194,6 +201,7 @@ export class PitchCirclesApp {
       c: () => this.space.nextChordType(),
       r: () => this.space.nextRegionType(),
       d: () => this.setDisplay(stepDisplayMode(this.displayMode, +1)),
+      v: () => this.setReversed(!this.circles.reversed),
       ' ': () => this.playChord(),
     };
     if (event.ctrlKey || event.metaKey || event.altKey) return; // leave browser shortcuts alone
@@ -209,6 +217,12 @@ export class PitchCirclesApp {
     }
   }
 
+  private setReversed(reversed: boolean): void {
+    this.circles.reversed = reversed;
+    this.reverse.on = reversed;
+    this.refresh();
+  }
+
   private setDisplay(mode: DisplayMode): void {
     this.displayMode = mode;
     this.refresh();
@@ -217,7 +231,7 @@ export class PitchCirclesApp {
   private refresh(): void {
     const space = this.space;
     this.circles.redraw(space, this.displayMode);
-    this.ringArrows.update(this.circles.layout, space);
+    this.ringArrows.update(this.circles.layout, space, (level) => this.circles.ringOf(level));
     this.region.update(space.regionRoot.label(this.displayMode), space.regionType);
     this.chord.update(space.chordRoot.label(this.displayMode), space.chordType);
     this.display.value = this.displayMode;

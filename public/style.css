@@ -349,6 +349,11 @@ main {
   color: #ff0000;
 }
 
+#info .toggle {
+  font: 15px Arial, sans-serif;
+  color: #000000;
+}
+
 #info .region {
   color: #ff00ff;
 }

@@ -28,11 +28,11 @@ export class RingArrows {
     }));
   }
 
-  /** Put the buttons beside the chord's root, on each ring. */
-  update(geometry: CircleGeometry, space: TonalPitchSpace): void {
+  /** Put the buttons beside the chord's root, on each level's ring (`ringOf` says which ring that is). */
+  update(geometry: CircleGeometry, space: TonalPitchSpace, ringOf: (level: Level) => number): void {
     const size = arrowSize(geometry);
     for (const { level, back, forward } of this.buttons) {
-      const places = ringArrowPlacements(geometry, level, space.chordRoot);
+      const places = ringArrowPlacements(geometry, ringOf(level), space.chordRoot);
       for (const [button, place] of [[back, places.back], [forward, places.forward]] as const) {
         button.style.width = button.style.height = `${size}px`;
         button.style.fontSize = `${Math.round(size * 0.6)}px`;
