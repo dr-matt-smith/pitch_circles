@@ -6,11 +6,6 @@ import { CircleGeometry } from './CircleGeometry.ts';
 import { levelColour, Palette } from './Palette.ts';
 import { ringOf } from './ringOrder.ts';
 
-// The levels whose root is marked with a dot: the region's tonic (red), and the chord's root (yellow).
-const ROOT_DOTS: readonly { level: Level; colour: string }[] = [
-  { level: Level.Diatonic, colour: Palette.regionRootDot },
-  { level: Level.Root, colour: Palette.chordRootDot },
-];
 
 /**
  * Draws tonal pitch space on a canvas as five concentric rings of 12 segments, one ring per level.
@@ -88,15 +83,14 @@ export class PitchCirclesView {
     }
   }
 
+  // The root dots: the region's tonic (red) in the diatonic ring, and the chord's root (yellow) in the outermost
+  // ring, whichever level that is. Each sits in its segment, just outside the label.
   private drawRootDots(space: TonalPitchSpace): void {
     const geo = this.geometry;
     const dotRadius = Math.max(4, geo.gap * 0.11);
-    for (const { level, colour } of ROOT_DOTS) {
-      const root = space.level(level).root();
-      if (!root) continue;
-      // in the segment, just outside the label
-      this.dot(geo.pointAt(geo.angleOf(root), geo.ringInner(this.ringOf(level)) + geo.gap * 0.8), dotRadius, colour);
-    }
+    const at = (pc: PitchClass, ring: number) => geo.pointAt(geo.angleOf(pc), geo.ringInner(ring) + geo.gap * 0.8);
+    this.dot(at(space.regionRoot, this.ringOf(Level.Diatonic)), dotRadius, Palette.regionRootDot);
+    this.dot(at(space.chordRoot, geo.rings - 1), dotRadius, Palette.chordRootDot);
   }
 
   // The circles, and the lines between the pitch classes

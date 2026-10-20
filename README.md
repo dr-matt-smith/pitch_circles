@@ -5,7 +5,7 @@ It draws on an HTML canvas and plays sound with Web Audio, so it needs no librar
 
 It draws (Lerdahl's) tonal pitch space as five concentric rings, one per level, from the inside out: chromatic,
 diatonic, triadic, fifth and root. A segment is coloured when its pitch class is in that level. A red dot marks
-the region's tonic (diatonic ring), and a yellow dot the chord's root (root ring).
+the region's tonic (in the diatonic ring), and a yellow dot the chord's root (always in the outermost ring).
 
 - **In Celbridge:** open `Pitch Circles.celbridge`. See `CELBRIDGE.md`.
 - **Without Celbridge** (e.g. on Linux, or with VS Code): see `README_deno_tooling.md`.
