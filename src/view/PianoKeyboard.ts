@@ -1,3 +1,5 @@
+import { DisplayMode } from '../model/DisplayMode.ts';
+import { PitchClass } from '../model/PitchClass.ts';
 import { pianoKeys, whiteKeyCount } from './pianoLayout.ts';
 
 /** Why a key is lit: it is the region's root, a note of the chord, or a key that was clicked. Used as a CSS class. */
@@ -11,11 +13,14 @@ const BLACK_KEY_WIDTH = 0.6; // as a fraction of a white key's width
  * A piano keyboard drawn with HTML elements, which lights up the keys being played.
  * Each key stays lit for as long as its note sounds, so overlapping notes can be lit at once.
  *
+ * Each key is labelled with its pitch class, in the same style as the circles (see setLabels()).
+ *
  * Clicking a key calls `onPress` with its note. Dragging across the keys with the button held plays each one.
  */
 export class PianoKeyboard {
   private readonly keys = new Map<number, HTMLElement>();
   private readonly timers = new Map<number, number>();
+  private readonly labels = new Map<number, HTMLElement>();
 
   constructor(container: HTMLElement, onPress: (note: number) => void, low = 60, high = 83) {
     const layout = pianoKeys(low, high);
@@ -32,8 +37,12 @@ export class PianoKeyboard {
       } else {
         element.style.left = `${key.whiteIndex * whiteWidth}%`;
         element.style.width = `${whiteWidth}%`;
-        if (key.name.startsWith('C')) element.textContent = key.name; // label each C, to show the octaves
       }
+      const label = document.createElement('span');
+      label.className = 'label';
+      element.append(label);
+      this.labels.set(key.note, label);
+
       element.addEventListener('pointerdown', (event) => {
         event.preventDefault(); // don't start selecting text, or take the focus from the page
         onPress(key.note);
@@ -43,6 +52,13 @@ export class PianoKeyboard {
       });
       container.append(element);
       this.keys.set(key.note, element);
+    }
+  }
+
+  /** Label the keys as the circles are labelled: e.g. "A#", "a" or "10". Hovering over a key shows its full name. */
+  setLabels(mode: DisplayMode): void {
+    for (const [note, label] of this.labels) {
+      label.textContent = new PitchClass(note).label(mode);
     }
   }
 

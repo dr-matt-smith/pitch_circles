@@ -128,6 +128,7 @@ export class PitchCirclesApp {
   private refresh(): void {
     this.circles.redraw(this.space, this.displayMode);
     this.info.update(this.space, this.displayMode);
+    this.piano.setLabels(this.displayMode);
     this.regionType.value = this.space.regionType;
     this.chordType.value = this.space.chordType;
   }

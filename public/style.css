@@ -33,6 +33,12 @@ body {
   border: 1px solid #222222;
   border-radius: 0 0 4px 4px;
   transition: background-color 0.25s, box-shadow 0.25s; /* fade out when a note ends */
+  /* the label, along the bottom of the key */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 /* Lit keys keep their dark border, with a white ring inside it, so neighbouring lit keys stay distinct */
@@ -44,18 +50,23 @@ body {
 #piano .white {
   height: 100%;
   background: #ffffff;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
   padding-bottom: 4px;
-  font: 11px Arial, sans-serif;
-  color: #666666;
+  font-size: 12px;
+  color: #0000ff; /* the circles' label colour */
 }
 
 #piano .black {
   height: 60%;
   background: #222222;
   z-index: 1;
+  padding-bottom: 3px;
+  font-size: 10px;
+  color: #ffffff;
+}
+
+/* Lit keys' labels in white, to show up on the colour */
+#piano .lit {
+  color: #ffffff;
 }
 
 /* Lit keys: the region's root in the region colour, the chord's notes in the chord colour (as in the info line) */
