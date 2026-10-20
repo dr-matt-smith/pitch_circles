@@ -2,15 +2,8 @@ import { Level, LEVELS } from '../model/Level.ts';
 import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import type { CircleGeometry } from '../view/CircleGeometry.ts';
 import { arrowSize, ringArrowPlacements } from '../view/ringArrowLayout.ts';
+import { STEPS } from './levelSteps.ts';
 
-// What each ring's arrows move the chord's root to, for their tooltips
-const STEPS: Record<Level, string> = {
-  [Level.Chromatic]: 'the next semitone',
-  [Level.Diatonic]: 'the next note of the region\'s scale',
-  [Level.Triadic]: 'the next note of the region\'s tonic triad',
-  [Level.Fifth]: 'the region\'s next root or fifth',
-  [Level.Root]: 'the region\'s next root (octave)',
-};
 
 /**
  * A "<" and ">" arrow on every ring of the circles, near the edges of the chord's root's segment, to move the chord by that ring's step:

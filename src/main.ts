@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     play: element('play'),
     stage: element('stage'),
     canvas: element('circles') as HTMLCanvasElement,
+    spaces: element('spaces'),
     settings: element('settings'),
     info: element('info'),
   });

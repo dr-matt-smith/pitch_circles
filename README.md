@@ -32,6 +32,8 @@ Every control is on show - buttons, radio buttons, switches and sliders - so you
   it follows the region. They sit beside the chord's root, and
   travel round with it. The chord stays on the keyboard (its root between C3 and D#5), wrapping round to the other end
   if it would go off it.
+- **The space buttons** (top right) do the same as the ring arrows, but stay put: one pill per pitch space, in its
+  ring's colour, with `<` and `>`. They are listed in the rings' order, outermost first.
 - **Play Once >** plays the chord. Changing the region plays its root (an octave below middle C, C3 to B3); changing
   the chord plays the chord, in root position from its root note (it starts on C4).
 - **Chord repeat** and **Region Root repeat** play the chord and/or the region's root on every beat, at the
@@ -79,6 +81,7 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/view/Palette.ts` | the colours | |
 | `src/ui/LevelControls.ts` | `LevelControls`: the region's or chord's `<` `>` buttons, root name and type radio buttons | `PS31`'s `JButton`s |
 | `src/ui/RingArrows.ts`, `src/view/ringArrowLayout.ts` | `RingArrows`: the `<` `>` buttons on each ring, laid over the canvas, which step the chord by that ring's step; `ringArrowPlacements()` works out where they go | |
+| `src/ui/SpaceButtons.ts`, `src/ui/levelSteps.ts` | `SpaceButtons`: the fixed, colour-coded buttons for stepping the chord through each pitch space; the spaces' names and steps | |
 | `src/ui/RadioGroup.ts`, `src/ui/Toggle.ts`, `src/ui/Slider.ts`, `src/ui/Dropdown.ts` | the radio buttons, switches, sliders and the instrument dropdown | |
 | `src/ui/InfoPanel.ts` | `InfoPanel`: the line of text underneath | `PS31`'s `JLabel`s |
 | `src/audio/NotePlayer.ts` | `NotePlayer` (interface), `SynthNotePlayer` (plays a `.synthsound` instrument), `SilentNotePlayer` | `MIDIPlayer` |

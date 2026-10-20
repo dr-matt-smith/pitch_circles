@@ -328,6 +328,57 @@ main {
   color: #444444;
 }
 
+/* The right-hand column: the space buttons at the top, the settings at the bottom */
+#right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 0;
+}
+
+#right .panel {
+  align-self: stretch;
+}
+
+/* The space buttons: a pill per pitch space, in its ring's colour (set in SpaceButtons.ts), with < and > */
+.space-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.space-buttons .space {
+  display: flex;
+  align-items: center;
+  border: 4px solid #000000;
+  border-radius: 999px;
+  font: 15px Arial, sans-serif;
+  color: #1f3c88;
+}
+
+.space-buttons .name {
+  flex: 1;
+  text-align: center;
+}
+
+.space-buttons button {
+  flex: none;
+  width: 36px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #1f3c88;
+  font: bold 24px Arial, sans-serif;
+}
+
+.space-buttons button:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
 #settings label:not(.radio-group label) {
   display: flex;
   align-items: center;

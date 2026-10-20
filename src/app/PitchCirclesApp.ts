@@ -11,6 +11,7 @@ import { InfoPanel } from '../ui/InfoPanel.ts';
 import { LevelControls } from '../ui/LevelControls.ts';
 import { RadioGroup } from '../ui/RadioGroup.ts';
 import { RingArrows } from '../ui/RingArrows.ts';
+import { SpaceButtons } from '../ui/SpaceButtons.ts';
 import { Slider } from '../ui/Slider.ts';
 import { Toggle } from '../ui/Toggle.ts';
 import { KeyRole, PianoKeyboard } from '../view/PianoKeyboard.ts';
@@ -23,6 +24,7 @@ export interface AppElements {
   play: HTMLElement; // play once, repeats, tempo and volume
   stage: HTMLElement; // holds the canvas, and the ring arrows over it
   canvas: HTMLCanvasElement;
+  spaces: HTMLElement; // the fixed buttons for stepping the chord through each pitch space
   settings: HTMLElement; // instrument and display
   info: HTMLElement;
 }
@@ -51,6 +53,7 @@ export class PitchCirclesApp {
   private readonly piano: PianoKeyboard;
   private readonly circles: PitchCirclesView;
   private readonly ringArrows: RingArrows;
+  private readonly spaceButtons: SpaceButtons;
   private readonly info: InfoPanel;
   private readonly region: LevelControls<RegionType>;
   private readonly chord: LevelControls<ChordType>;
@@ -89,6 +92,7 @@ export class PitchCirclesApp {
 
     this.circles = new PitchCirclesView(elements.canvas);
     this.ringArrows = new RingArrows(elements.stage, (level, direction) => this.space.stepChordIn(level, direction));
+    this.spaceButtons = new SpaceButtons(elements.spaces, (level, direction) => this.space.stepChordIn(level, direction));
 
     // Play once, the repeats, tempo and volume
     const playOnce = document.createElement('button');
@@ -239,6 +243,7 @@ export class PitchCirclesApp {
     const space = this.space;
     this.circles.redraw(space, this.displayMode);
     this.ringArrows.update(this.circles.layout, space, (level) => this.circles.ringOf(level));
+    this.spaceButtons.update((level) => this.circles.ringOf(level));
     this.region.update(space.regionRoot.label(this.displayMode), space.regionType);
     this.chord.update(space.chordRoot.label(this.displayMode), space.chordType, !space.chordFollowsRegion);
     this.display.value = this.displayMode;
