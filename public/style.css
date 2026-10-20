@@ -41,31 +41,6 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Keys in the region's scale: outlined in the region colour, like the diatonic ring of the circles */
-#piano .in-scale {
-  box-shadow: inset 0 0 0 3px #ff00ff;
-}
-
-/* The region's root (the tonic): a thicker outline */
-#piano .in-scale.tonic {
-  box-shadow: inset 0 0 0 6px #ff00ff;
-}
-
-/* Lit keys keep their dark border, with a white ring inside it, so neighbouring lit keys stay distinct.
-   A lit key in the scale keeps its outline too, with the white ring inside that. */
-#piano .lit {
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
-  transition: none; /* light up straight away */
-}
-
-#piano .lit.in-scale {
-  box-shadow: inset 0 0 0 3px #ff00ff, inset 0 0 0 5px rgba(255, 255, 255, 0.85);
-}
-
-#piano .lit.in-scale.tonic {
-  box-shadow: inset 0 0 0 6px #ff00ff, inset 0 0 0 8px rgba(255, 255, 255, 0.85);
-}
-
 #piano .white {
   height: 100%;
   background: #ffffff;
@@ -83,23 +58,72 @@ body {
   color: #ffffff;
 }
 
-/* Lit keys' labels in white, to show up on the colour */
-#piano .lit {
+/* Keys in the region's scale: filled in the region colour, like the diatonic ring of the circles */
+#piano .in-scale {
+  background: #ff00ff;
   color: #ffffff;
 }
 
-/* Lit keys: the region's root in the region colour, the chord's notes in the chord colour (as in the info line) */
+/* Lit keys: the region's root in a darker region colour (so it shows on the scale's colour), the chord's notes in
+   the chord colour (as in the info line), and a clicked key in the circles' line colour */
+#piano .lit {
+  color: #ffffff;
+  transition: none; /* light up straight away */
+}
+
 #piano .lit.region {
-  background: #ff00ff;
+  background: #8800aa;
 }
 
 #piano .lit.chord {
   background: #ff0000;
 }
 
-/* A key that was clicked: in the circles' line colour */
 #piano .lit.played {
   background: #0000ff;
+}
+
+/* A coloured key (in the scale, or lit) has a ring inside its border in its own colour - white for a white key,
+   black for a black key - so you can still tell which keys are which, and neighbouring keys stay distinct */
+#piano .white.in-scale,
+#piano .white.lit {
+  box-shadow: inset 0 0 0 3px #ffffff;
+}
+
+#piano .black.in-scale,
+#piano .black.lit {
+  box-shadow: inset 0 0 0 3px #222222;
+}
+
+/* The region's root (the tonic): a yellow and a red dot, as in the circles. Hidden on the other keys */
+#piano .dot {
+  display: none;
+  position: absolute;
+  bottom: 22px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid #222222;
+}
+
+#piano .black .dot {
+  bottom: 17px;
+  width: 6px;
+  height: 6px;
+}
+
+#piano .tonic .dot {
+  display: block;
+}
+
+#piano .dot.left {
+  right: calc(50% + 1px);
+  background: #ffff00;
+}
+
+#piano .dot.right {
+  left: calc(50% + 1px);
+  background: #ff0000;
 }
 
 #buttons {
