@@ -56,10 +56,56 @@ Deno.test('region and chord types cycle round', () => {
   assertEquals(space.regionType, RegionType.HarmonicMinor);
   space.nextRegionType();
   assertEquals(space.regionType, RegionType.Major);
-  space.nextChordType();
-  assertEquals(space.chordType, ChordType.Minor);
-  space.nextChordType();
-  assertEquals(space.chordType, ChordType.Major);
+  const chordTypes: ChordType[] = [];
+  for (let i = 0; i < 4; i++) {
+    space.nextChordType();
+    chordTypes.push(space.chordType);
+  }
+  assertEquals(chordTypes, [ChordType.Minor, ChordType.Diminished, ChordType.Augmented, ChordType.Major]);
+});
+
+Deno.test('a chord following the region takes the triad on its root in the scale', () => {
+  const space = new TonalPitchSpace(); // C major region, C chord
+  space.chordFollowsRegion = true;
+  const types: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    types.push(space.chordName);
+    space.stepChordIn(Level.Diatonic, +1);
+  }
+  assertEquals(types, [
+    'C major',
+    'D minor',
+    'E minor',
+    'F major',
+    'G major',
+    'A minor',
+    'B diminished',
+  ]);
+  assertEquals(space.chordMidiNotes(), [72, 76, 79]); // back to C, a C major triad
+});
+
+Deno.test('harmonic minor gives an augmented III and a major V', () => {
+  const space = new TonalPitchSpace(new PitchClass(9), new PitchClass(0)); // A region, C chord
+  space.regionType = RegionType.HarmonicMinor;
+  space.chordFollowsRegion = true;
+  assertEquals(space.chordName, 'C augmented');
+  space.stepChord(4); // E
+  assertEquals(space.chordName, 'E major');
+  space.stepChord(4); // G#
+  assertEquals(space.chordName, 'G# diminished');
+});
+
+Deno.test('following the region, a root outside the scale keeps the chosen type', () => {
+  const space = new TonalPitchSpace(); // C major
+  space.chordType = ChordType.Minor;
+  space.chordFollowsRegion = true;
+  space.stepChord(1); // C#: not in C major
+  assertEquals(space.chordName, 'C# minor');
+  space.chordFollowsRegion = false;
+  space.stepChord(1); // D, not following: the chosen type
+  assertEquals(space.chordName, 'D minor');
+  space.chordType = ChordType.Major;
+  assertEquals(space.chordName, 'D major');
 });
 
 Deno.test('a minor chord has a minor third', () => {

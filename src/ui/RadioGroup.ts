@@ -11,9 +11,10 @@ let groups = 0; // gives each group's radio buttons their own name
  */
 export class RadioGroup<T> {
   private readonly inputs = new Map<T, HTMLInputElement>();
+  private readonly fieldset: HTMLFieldSetElement;
 
   constructor(container: HTMLElement, title: string, options: readonly RadioOption<T>[], onChange: (value: T) => void) {
-    const fieldset = document.createElement('fieldset');
+    const fieldset = this.fieldset = document.createElement('fieldset');
     fieldset.className = 'radio-group';
     const legend = document.createElement('legend');
     legend.textContent = title;
@@ -33,6 +34,11 @@ export class RadioGroup<T> {
       this.inputs.set(option.value, input);
     }
     container.append(fieldset);
+  }
+
+  /** Grey the buttons out (still showing the choice), or let them be clicked again. */
+  set enabled(enabled: boolean) {
+    this.fieldset.disabled = !enabled;
   }
 
   set value(value: T) {

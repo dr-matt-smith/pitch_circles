@@ -223,6 +223,18 @@ button:hover {
   cursor: pointer;
 }
 
+.radio-group:disabled {
+  opacity: 0.5;
+}
+
+.radio-group:disabled label {
+  cursor: default;
+}
+
+.level .toggle {
+  font: 14px Arial, sans-serif;
+}
+
 /* The circles, as big as will fit, with the play controls on the left and the settings on the right */
 main {
   flex: 1;

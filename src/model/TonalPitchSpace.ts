@@ -1,9 +1,9 @@
 import { Level } from './Level.ts';
 import { PitchClass } from './PitchClass.ts';
 import { PitchClassSet } from './PitchClassSet.ts';
-import { CHORD_TYPES, ChordType, triadIntervals } from './ChordType.ts';
+import { CHORD_TYPES, ChordType, chordTypeOf, triadIntervals } from './ChordType.ts';
 import { nextIn } from './cycle.ts';
-import { REGION_TYPES, RegionType, scaleIntervals, tonicTriadIntervals } from './RegionType.ts';
+import { REGION_TYPES, RegionType, scaleIntervals, scaleTriadIntervals, tonicTriadIntervals } from './RegionType.ts';
 
 const CHROMATIC = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -16,11 +16,11 @@ export const MIDDLE_C = 60;
 export const REGION_ROOT_BASE = MIDDLE_C - 12;
 
 /**
- * The chord's root stays between C3 and E5 (MIDI 48 to 76), so all its notes - up to 7 semitones above the root - are
+ * The chord's root stays between C3 and D#5 (MIDI 48 to 75), so all its notes - up to 8 semitones above the root - are
  * on the keyboard (C3 to B5). Past either end it wraps round to the other, keeping its pitch class.
  */
 export const CHORD_ROOT_LOWEST = 48;
-export const CHORD_ROOT_HIGHEST = 76;
+export const CHORD_ROOT_HIGHEST = 75;
 
 /** Which changed: the region (its root or type), or the chord. */
 export type Change = 'region' | 'chord';
@@ -42,6 +42,7 @@ export class TonalPitchSpace {
   private _regionType: RegionType;
   private _chordRootNote: number;
   private _chordType: ChordType;
+  private _chordFollowsRegion = false;
   private readonly listeners: Listener[] = [];
 
   constructor(
@@ -84,10 +85,20 @@ export class TonalPitchSpace {
     return this._chordRootNote;
   }
 
+  /**
+   * The chord's type. When it follows the region (see chordFollowsRegion), this is the triad on its root in the
+   * region's scale - e.g. in C major, D is minor and B diminished - unless its root isn't in the scale, when it is the
+   * type last chosen.
+   */
   get chordType(): ChordType {
-    return this._chordType;
+    if (!this._chordFollowsRegion) return this._chordType;
+    const scale = scaleIntervals(this._regionType);
+    const degree = scale.indexOf(this.chordRoot.transpose(-this._regionRoot.value).value);
+    if (degree < 0) return this._chordType;
+    return chordTypeOf(scaleTriadIntervals(this._regionType, degree)) ?? this._chordType;
   }
 
+  /** Choose the chord's type (used whenever it isn't following the region). */
   set chordType(type: ChordType) {
     this._chordType = type;
     this.changed('chord');
@@ -124,6 +135,16 @@ export class TonalPitchSpace {
     this.changed('chord');
   }
 
+  /** Whether the chord's type follows the region: the triad on its root in the region's scale. */
+  get chordFollowsRegion(): boolean {
+    return this._chordFollowsRegion;
+  }
+
+  set chordFollowsRegion(follows: boolean) {
+    this._chordFollowsRegion = follows;
+    this.changed('chord');
+  }
+
   /** Change the region to the next type: major, minor, harmonic minor, major... */
   nextRegionType(): void {
     this.regionType = nextIn(REGION_TYPES, this._regionType);
@@ -141,7 +162,7 @@ export class TonalPitchSpace {
 
   /** e.g. "C major" */
   get chordName(): string {
-    return `${this.chordRoot.name} ${this._chordType}`;
+    return `${this.chordRoot.name} ${this.chordType}`;
   }
 
   /** The pitch classes in one level, for the current region (the chord doesn't change them). */
@@ -161,7 +182,7 @@ export class TonalPitchSpace {
 
   /** MIDI note numbers for the chord, in root position from its root note. */
   chordMidiNotes(): number[] {
-    return triadIntervals(this._chordType).map((interval) => this._chordRootNote + interval);
+    return triadIntervals(this.chordType).map((interval) => this._chordRootNote + interval);
   }
 
   onChange(listener: Listener): void {

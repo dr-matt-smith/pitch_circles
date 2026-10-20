@@ -7,7 +7,7 @@ It draws (Lerdahl's) tonal pitch space as five concentric rings, one per level, 
 diatonic, triadic, fifth and root. The levels are the region's basic space - its scale, its tonic triad, its root and
 fifth, and its root - so only the region (its root and type) changes them. The chord moves through them. A segment is coloured when its pitch class is in that level, each level in its own
 colour: chromatic pale blue, diatonic magenta, triadic orange, fifth green, root cyan. The chord's three notes are
-outlined in red as slices, from the centre to the edge. A red dot marks
+outlined in thick black as slices, from the centre to the edge. A red dot marks
 the region's tonic (in the diatonic ring), and a yellow dot the chord's root (always in the outermost ring).
 
 - **In Celbridge:** open `Pitch Circles.celbridge`. See `CELBRIDGE.md`.
@@ -20,14 +20,17 @@ Every control is on show - buttons, radio buttons, switches and sliders - so you
 
 - **Region** and **Chord** (under the keyboard): `<` and `>` move the root round the circle a semitone at a time,
   beside the root's name, and radio buttons choose the type. A region can be major, minor (natural minor: A minor has
-  the same notes as C major) or harmonic minor (the 7th raised: A harmonic minor has G#). A chord is a major or minor
-  triad.
+  the same notes as C major) or harmonic minor (the 7th raised: A harmonic minor has G#). A chord is a major, minor,
+  diminished or augmented triad. With **Follow region** on, the chord is the triad on its root in the region's scale
+  (in C major: D minor, B diminished; in A harmonic minor: C augmented, E major), and its type buttons are greyed
+  out; a root outside the scale keeps the type last chosen.
 - **The arrows on the rings** move the chord by that ring's step, to the next note down (`<`) or up (`>`) in that
   level: the next semitone (chromatic ring), the next note of the region's scale (diatonic), the next note of the
   region's tonic triad (triadic), the region's next root or fifth (open fifth), or the region's next root (octave,
   the outer ring). So from a C major chord on C4 in C major, `>` goes to C#4, D4, E4, G4 or C5; the open fifth ring
-  is always C and G there, so from G it goes back up to C. The rings don't move: the chord keeps its own type. They sit beside the chord's root, and
-  travel round with it. The chord stays on the keyboard (its root between C3 and E5), wrapping round to the other end
+  is always C and G there, so from G it goes back up to C. The rings don't move: the chord keeps its own type, unless
+  it follows the region. They sit beside the chord's root, and
+  travel round with it. The chord stays on the keyboard (its root between C3 and D#5), wrapping round to the other end
   if it would go off it.
 - **Play Once >** plays the chord. Changing the region plays its root (an octave below middle C, C3 to B3); changing
   the chord plays the chord, in root position from its root note (it starts on C4).
@@ -68,7 +71,7 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/model/PitchClassSet.ts` | `PitchClassSet`, `Membership`: which pitch classes are in a level, and which is its root | `TrivaluePCList` |
 | `src/model/Level.ts` | `Level`: chromatic, diatonic, triadic, fifth, root | `PSPanel`'s constants |
 | `src/model/TonalPitchSpace.ts` | `TonalPitchSpace`: the region and chord (each a root and a type; the chord's root is an actual note), each level's pitch classes (from the region), the chord's notes, and stepping the chord through a level. Tells listeners when it changes | `PSPanel.levelPCsAsTrivalue()` |
-| `src/model/RegionType.ts`, `src/model/ChordType.ts` | `RegionType` (major, minor, harmonic minor) and `ChordType` (major, minor), with their intervals | `PSPanel`'s unused `regionType`, `chordType` |
+| `src/model/RegionType.ts`, `src/model/ChordType.ts` | `RegionType` (major, minor, harmonic minor) and `ChordType` (major, minor, diminished, augmented), with their intervals, and the triad on each degree of a scale | `PSPanel`'s unused `regionType`, `chordType` |
 | `src/model/DisplayMode.ts` | `DisplayMode`: how pitch classes are labelled | `PSPanel.displayMode` |
 | `src/view/CircleGeometry.ts` | `CircleGeometry`: ring radii, pitch class angles, points on circles | `CircleStuff`, `CirclePoint` |
 | `src/view/PitchCirclesView.ts`, `src/view/ringOrder.ts` | `PitchCirclesView`: draws the rings, dots and labels on a canvas, sized to fit; `ringOf()` says which ring each level is on (normal or reversed) | `PSPanel.paintComponent()` |

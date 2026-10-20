@@ -85,14 +85,14 @@ export class PitchCirclesView {
     }
   }
 
-  // The chord as 'pizza slices': a bold outline round each of its notes' wedges, from the centre to the outer edge.
+  // The chord as 'pizza slices': a thick black outline round each of its notes' wedges, from the centre to the outer edge.
   // Only outlined, so the rings' colours inside still show
   private drawChordSlices(space: TonalPitchSpace): void {
     const ctx = this.ctx;
     const geo = this.geometry;
     const { x, y } = geo.centre;
     ctx.strokeStyle = Palette.chordSlice;
-    ctx.lineWidth = Math.max(2.5, geo.gap * 0.06);
+    ctx.lineWidth = Math.max(4, geo.gap * 0.1);
     ctx.lineJoin = 'round';
     for (const pc of space.chordPitchClasses()) {
       const { start, end } = geo.segmentOf(pc);

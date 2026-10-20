@@ -16,9 +16,11 @@ export interface LevelControlsOptions<T> {
 export class LevelControls<T> {
   private readonly root: HTMLElement;
   private readonly types: RadioGroup<T>;
+  /** The controls' box, for adding more controls to (e.g. a switch). */
+  readonly element: HTMLElement;
 
   constructor(container: HTMLElement, options: LevelControlsOptions<T>) {
-    const section = document.createElement('section');
+    const section = this.element = document.createElement('section');
     section.className = `level ${options.className}`;
 
     const title = document.createElement('h2');
@@ -37,9 +39,11 @@ export class LevelControls<T> {
     container.append(section);
   }
 
-  update(rootName: string, type: T): void {
+  /** Show the root's name and the type; `typeChoosable` false greys the type's radio buttons out. */
+  update(rootName: string, type: T, typeChoosable = true): void {
     this.root.textContent = rootName;
     this.types.value = type;
+    this.types.enabled = typeChoosable;
   }
 
   private static button(text: string, title: string, run: () => void): HTMLButtonElement {

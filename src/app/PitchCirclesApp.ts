@@ -80,6 +80,13 @@ export class PitchCirclesApp {
       onType: (type) => this.space.chordType = type,
     });
 
+    new Toggle(
+      this.chord.element,
+      'Follow region',
+      'Make the chord the triad on its root in the region\'s scale (e.g. in C major, D is minor, B diminished)',
+      (on) => this.space.chordFollowsRegion = on,
+    );
+
     this.circles = new PitchCirclesView(elements.canvas);
     this.ringArrows = new RingArrows(elements.stage, (level, direction) => this.space.stepChordIn(level, direction));
 
@@ -233,7 +240,7 @@ export class PitchCirclesApp {
     this.circles.redraw(space, this.displayMode);
     this.ringArrows.update(this.circles.layout, space, (level) => this.circles.ringOf(level));
     this.region.update(space.regionRoot.label(this.displayMode), space.regionType);
-    this.chord.update(space.chordRoot.label(this.displayMode), space.chordType);
+    this.chord.update(space.chordRoot.label(this.displayMode), space.chordType, !space.chordFollowsRegion);
     this.display.value = this.displayMode;
     this.info.update(space);
     this.piano.setLabels(this.displayMode);
