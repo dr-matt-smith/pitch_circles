@@ -409,7 +409,8 @@ main {
   padding: 5px 9px;
 }
 
-/* The arrows on the rings: plain curved arrows laid over the canvas. Subtle until the mouse is over one */
+/* The arrows on the rings: plain chevrons laid over the canvas, turned to point along their ring. Subtle until the
+   mouse is over one */
 .ring-arrow {
   position: absolute;
   display: flex;
@@ -420,7 +421,10 @@ main {
   border-radius: 50%;
   background: transparent;
   color: #1f3c88;
-  opacity: 0.8;
+  opacity: 0.75;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .ring-arrow:hover {

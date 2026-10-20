@@ -4,10 +4,9 @@ import { SPACE_NAMES, STEPS } from './levelSteps.ts';
 import { turnButton } from './turnButton.ts';
 
 /**
- * A fixed panel of buttons, one per pitch space, coloured like its ring: anticlockwise and clockwise arrows step
- * the chord to the next
- * note down or up in that space, as the arrows on the rings do, but these stay put. They are listed in the same
- * order as the rings, outermost first.
+ * A fixed panel of buttons, one per pitch space, coloured like its ring, which step the chord to the next note in that
+ * space, as the arrows on the rings do, but stay put: the left end turns clockwise (a step up), the right end
+ * anticlockwise (a step down). They are listed in the same order as the rings, outermost first.
  */
 export class SpaceButtons {
   private readonly rows = new Map<Level, HTMLElement>();
@@ -24,9 +23,9 @@ export class SpaceButtons {
       name.textContent = SPACE_NAMES[level];
 
       row.append(
-        turnButton(-1, `Chord root anticlockwise, down to ${STEPS[level]}`, () => onStep(level, -1)),
-        name,
         turnButton(+1, `Chord root clockwise, up to ${STEPS[level]}`, () => onStep(level, +1)),
+        name,
+        turnButton(-1, `Chord root anticlockwise, down to ${STEPS[level]}`, () => onStep(level, -1)),
       );
       this.rows.set(level, row);
     }

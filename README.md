@@ -25,16 +25,17 @@ Every control is on show - buttons, radio buttons, switches and sliders - so you
   diminished or augmented triad. With **Follow region** on, the chord is the triad on its root in the region's scale
   (in C major: D minor, B diminished; in A harmonic minor: C augmented, E major), and its type buttons are greyed
   out; a root outside the scale keeps the type last chosen.
-- **The arrows on the rings** move the chord by that ring's step, to the next note down (↺) or up (↻) in that
+- **The arrows on the rings** move the chord by that ring's step, to the next note down (`<`) or up (`>`) in that
   level: the next semitone (chromatic ring), the next note of the region's scale (diatonic), the next note of the
   region's tonic triad (triadic), the region's next root or fifth (open fifth), or the region's next root (octave,
-  the outer ring). So from a C major chord on C4 in C major, ↻ goes to C#4, D4, E4, G4 or C5; the open fifth ring
+  the outer ring). So from a C major chord on C4 in C major, `>` goes to C#4, D4, E4, G4 or C5; the open fifth ring
   is always C and G there, so from G it goes back up to C. The rings don't move: the chord keeps its own type, unless
   it follows the region. They sit beside the chord's root, and
   travel round with it. The chord stays on the keyboard (its root between C3 and D#5), wrapping round to the other end
   if it would go off it.
 - **The space buttons** (top right) do the same as the ring arrows, but stay put: one pill per pitch space, in its
-  ring's colour, with ↺ and ↻. They are listed in the rings' order, outermost first.
+  ring's colour: the left end (↻) turns clockwise, a step up, and the right end (↺)
+  anticlockwise, a step down. They are listed in the rings' order, outermost first.
 - **Play Once >** plays the chord. Changing the region plays its root (an octave below middle C, C3 to B3); changing
   the chord plays the chord, in root position from its root note (it starts on C4).
 - **Chord repeat** and **Region Root repeat** play the chord and/or the region's root on every beat, at the
@@ -81,7 +82,7 @@ The model and geometry don't touch the page, so they are tested on their own in 
 | `src/view/PianoKeyboard.ts`, `src/view/pianoLayout.ts` | `PianoKeyboard`: the keyboard along the top (C3 to B5), lighting the keys as they play, and playing the keys you click; `pianoKeys()` works out where each key goes | |
 | `src/view/Palette.ts` | the colours | |
 | `src/ui/LevelControls.ts`, `src/ui/turnButton.ts` | `LevelControls`: the region's or chord's ↺ ↻ buttons, root name and type radio buttons | `PS31`'s `JButton`s |
-| `src/ui/RingArrows.ts`, `src/view/ringArrowLayout.ts` | `RingArrows`: the ↺ ↻ buttons on each ring, laid over the canvas, which step the chord by that ring's step; `ringArrowPlacements()` works out where they go | |
+| `src/ui/RingArrows.ts`, `src/view/ringArrowLayout.ts` | `RingArrows`: the `<` `>` buttons on each ring, laid over the canvas, which step the chord by that ring's step; `ringArrowPlacements()` works out where they go | |
 | `src/ui/SpaceButtons.ts`, `src/ui/levelSteps.ts` | `SpaceButtons`: the fixed, colour-coded buttons for stepping the chord through each pitch space; the spaces' names and steps | |
 | `src/ui/RadioGroup.ts`, `src/ui/Toggle.ts`, `src/ui/Slider.ts`, `src/ui/Dropdown.ts` | the radio buttons, switches, sliders and the instrument dropdown | |
 | `src/ui/InfoPanel.ts` | `InfoPanel`: the line of text underneath | `PS31`'s `JLabel`s |

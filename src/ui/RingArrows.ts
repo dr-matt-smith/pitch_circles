@@ -3,11 +3,10 @@ import type { TonalPitchSpace } from '../model/TonalPitchSpace.ts';
 import type { CircleGeometry } from '../view/CircleGeometry.ts';
 import { arrowSize, ringArrowPlacements } from '../view/ringArrowLayout.ts';
 import { STEPS } from './levelSteps.ts';
-import { turnButton } from './turnButton.ts';
 
 
 /**
- * An anticlockwise and a clockwise arrow on every ring of the circles, near the edges of the chord's root's segment, to move the chord by that ring's step:
+ * A "<" (anticlockwise) and ">" (clockwise) arrow on every ring of the circles, near the edges of the chord's root's segment, to move the chord by that ring's step:
  * to the next note down or up in that level of the pitch space (see TonalPitchSpace.stepChordIn()). They are HTML
  * buttons laid over the canvas, and move round with the chord's root.
  */
@@ -17,8 +16,8 @@ export class RingArrows {
   constructor(container: HTMLElement, onStep: (level: Level, direction: 1 | -1) => void) {
     this.buttons = LEVELS.map((level) => ({
       level,
-      back: RingArrows.button(container, -1, `Chord root anticlockwise, down to ${STEPS[level]}`, () => onStep(level, -1)),
-      forward: RingArrows.button(container, +1, `Chord root clockwise, up to ${STEPS[level]}`, () => onStep(level, +1)),
+      back: RingArrows.button(container, '<', `Chord root anticlockwise, down to ${STEPS[level]}`, () => onStep(level, -1)),
+      forward: RingArrows.button(container, '>', `Chord root clockwise, up to ${STEPS[level]}`, () => onStep(level, +1)),
     }));
   }
 
@@ -30,15 +29,21 @@ export class RingArrows {
       const places = ringArrowPlacements(geometry, ring, space.chordRoot);
       for (const [button, place] of [[back, places.back], [forward, places.forward]] as const) {
         button.style.width = button.style.height = `${size}px`;
+        button.style.fontSize = `${size}px`;
         button.style.left = `${place.centre.x - size / 2}px`;
         button.style.top = `${place.centre.y - size / 2}px`;
+        button.style.transform = `rotate(${place.rotation}rad)`;
       }
     }
   }
 
-  private static button(container: HTMLElement, direction: 1 | -1, title: string, run: () => void): HTMLButtonElement {
-    const button = turnButton(direction, title, run);
-    button.classList.add('ring-arrow');
+  private static button(container: HTMLElement, text: string, title: string, run: () => void): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ring-arrow';
+    button.textContent = text;
+    button.title = title;
+    button.addEventListener('click', run);
     container.append(button);
     return button;
   }
