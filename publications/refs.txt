@@ -1,0 +1,20 @@
+NOTE:
+- Smith's Pitch Circles 2000 publication is believed to describe first geometric (circular!) implementation of Lerdahl's Pitch Spaces
+- Lerdahl (1992) 
+	- “a complementary pitch space that has a reductional rather than a geometric format” p112
+	- “The structure of this shifting pitch space demands further representation, perhaps geometric in format, but we will not pursue this here.” p113
+
+
+Lerdahl, F. (1992)
+	“Cognitive Constraints on Compositional Systems,” Contemporary Music Review 6(2): 97–121
+	Availble at: https://www.researchgate.net/publication/232450135_Cognitive_constraints_on_compositional_systems
+
+Smith, Matt (2000)
+	"A prototype direct manipulation music tool based on Lerdahl's Pitch Spaces"
+	In "AISB-2000: Time for AI and Society", proceedings of the AISB-2000 Symposium on Creative & Cultural Aspects and Applications of AI & Cognitive Science, Birmingham, UK, April 2000. pp61-71
+	Available at: https://aisb.org.uk/wp-content/uploads/2019/12/AISB00_Creativity.pdf
+
+Smith, Matt (2002) 
+	"Pitch Circles – From Music Theory To Computer-Based Learning Tool," The ITB Journal : Vol. 3: Iss. 1, Article 7. p96-115
+	doi:10.21427/D7CW43
+	Available at: https://arrow.tudublin.ie/itbj/vol3/iss1/7
